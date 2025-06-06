@@ -14,11 +14,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 });
 
-Route::get('/auth/redirect', [GoogleAuthController::class], 'redirect')
+Route::get('/auth/redirect', [GoogleAuthController::class, 'redirect'])
     ->name('google.login');
- 
 
-Route::get('/auth/callback', [GoogleAuthController::class], 'callback')
+
+Route::get('/auth/callback', [GoogleAuthController::class, 'callback'])
     ->name('google.callback');
 
 require __DIR__.'/settings.php';
