@@ -15,7 +15,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 Route::get('/auth/redirect', [GoogleAuthController::class, 'redirect'])
-    ->name('google.login');
+    ->name('google.redirect');
 
 
 Route::get('/auth/callback', [GoogleAuthController::class, 'callback'])

@@ -40,7 +40,7 @@ export default function Login({ status, canResetPassword, errors: propErrors }: 
     };
 
     const handleGoogleLogin = () => {
-        router.get(route('google.login'));
+        window.location.href = route('google.redirect');
     };
 
     return (
