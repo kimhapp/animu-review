@@ -11,9 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('genre__animes', function (Blueprint $table) {
+        Schema::create('review__likes', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('review_id')->constrained('reviews')->onDelete('cascade');
+            $table->enum('type', ['like', 'dislike']);
+            $table->timestamps();   
         });
     }
 
@@ -22,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('genre__animes');
+        Schema::dropIfExists('review__likes');
     }
 };

@@ -14,10 +14,18 @@ return new class extends Migration
         Schema::create('animes', function (Blueprint $table) {
             $table->id();
             $table->string('title');
+            $table->string('native_title');
             $table->text('description');
-            $table->float('user_rating')->default(0);
+            $table->decimal('user_rating', 1, 1)->default(0.0);
+            $table->date('release_date');
+            $table->unsignedSmallInteger('duration');
+            $table->string('director');
+            $table->string('studio');
+            $table->unsignedInteger('favorite_count')->default(0);
+            $table->foreignId('type_id')->constrained('types')->onDelete('cascade');
+            $table->string('imageUrl')->nullable();
             $table->timestamps();
-        });
+        }); 
     }
 
     /**

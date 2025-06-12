@@ -8,16 +8,20 @@ use App\Models\Genre;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 
-class CreateAnimeController extends Controller
+class AnimeController extends Controller
 {
     public function create() {
-        return Inertia::render('admin/anime');
+        return Inertia::render('admin/anime', [
+            'animes' => Anime::all()
+        ]);
     }
     
     //
     public function genres() {
-        $this->authorize('create', Anime::class);
         return Genre::select('id', 'name')->get();
+    }
+
+    public function store(Request $request)  {
 
     }
 }

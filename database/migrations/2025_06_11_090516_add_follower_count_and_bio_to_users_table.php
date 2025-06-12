@@ -15,6 +15,7 @@ return new class extends Migration
             $table->integer('follower_count')->default(0);
             $table->text('bio')->nullable();
             $table->enum('role', ['user', 'reviewer', 'admin'])->default("user")->change();
+            $table->string('bannerUrl')->nullable();
         });
         
         DB::table('users')->update(['follower_count' => 0]);

@@ -14,4 +14,9 @@ class Genre extends Model
         'name',
         'description',
     ];
+
+    public function animes()
+    {
+        return $this->belongsToMany(Anime::class);
+    }
 }

@@ -47,20 +47,4 @@ class GenrePolicy
     {
         return $user->isAdmin();
     }
-
-    /**
-     * Determine whether the user can restore the model.
-     */
-    public function restore(User $user, Genre $genre): bool
-    {
-        return $user->isAdmin();
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, Genre $genre): bool
-    {
-        return $user->isAdmin();
-    }
 }
