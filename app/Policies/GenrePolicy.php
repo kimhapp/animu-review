@@ -13,7 +13,7 @@ class GenrePolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,7 +21,7 @@ class GenrePolicy
      */
     public function view(User $user, Genre $genre): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -29,7 +29,7 @@ class GenrePolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->isAdmin();
     }
 
     /**
@@ -37,7 +37,7 @@ class GenrePolicy
      */
     public function update(User $user, Genre $genre): bool
     {
-        return false;
+        return $user->isAdmin();
     }
 
     /**
@@ -45,7 +45,7 @@ class GenrePolicy
      */
     public function delete(User $user, Genre $genre): bool
     {
-        return false;
+        return $user->isAdmin();
     }
 
     /**
@@ -53,7 +53,7 @@ class GenrePolicy
      */
     public function restore(User $user, Genre $genre): bool
     {
-        return false;
+        return $user->isAdmin();
     }
 
     /**
@@ -61,6 +61,6 @@ class GenrePolicy
      */
     public function forceDelete(User $user, Genre $genre): bool
     {
-        return false;
+        return $user->isAdmin();
     }
 }

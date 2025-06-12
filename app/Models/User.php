@@ -7,6 +7,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+enum UserRole: string
+{
+    case User = 'user';
+    case Reviewer = 'reviewer';
+    case Admin = 'admin';
+}
+
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -43,6 +50,22 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'role' => UserRole::class,
         ];
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === UserRole::Admin;
+    }
+
+    public function isReviewer(): bool
+    {
+        return $this->role === UserRole::Reviewer;
+    }
+
+    public function isUser(): bool
+    {
+        return $this->role === UserRole::User;
     }
 }

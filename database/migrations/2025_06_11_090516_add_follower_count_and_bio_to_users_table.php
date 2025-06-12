@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->integer('follower_count')->default(0);
             $table->text('bio')->nullable();
+            $table->enum('role', ['user', 'reviewer', 'admin'])->default("user")->change();
         });
         
         DB::table('users')->update(['follower_count' => 0]);

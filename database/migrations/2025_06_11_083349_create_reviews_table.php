@@ -17,6 +17,7 @@ return new class extends Migration
             $table->longText('review');
             $table->integer('like_count')->default(0);
             $table->integer('dislike_count')->default(0);
+            $table->enum('status', ['pending', 'accepted', 'declined'])->default('pending');
             $table->timestamps();
         });
     }

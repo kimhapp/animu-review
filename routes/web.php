@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\Home\HomeMainController;
+use App\Http\Controllers\Admin\CreateAnimeController;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -16,6 +17,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
+});
+
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/admin/anime', [CreateAnimeController::class, 'create']);
+    Route::get('/admin/anime/genres', [CreateAnimeController::class, 'genres']);
 });
 
 Route::get('/auth/redirect', [GoogleAuthController::class, 'redirect'])
