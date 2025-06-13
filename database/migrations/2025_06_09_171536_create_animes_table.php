@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('studio');
             $table->unsignedInteger('favorite_count')->default(0);
             $table->foreignId('type_id')->constrained('types')->onDelete('cascade');
+            $table->foreignId('review_id')->constrained('reviews')->onDelete('cascade')->nullable();
             $table->string('imageUrl')->nullable();
             $table->timestamps();
         }); 

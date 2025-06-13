@@ -37,7 +37,7 @@ class AnimePolicy
      */
     public function update(User $user, Anime $anime): bool
     {
-        return false;
+        return $user->isAdmin();
     }
 
     /**
@@ -45,22 +45,6 @@ class AnimePolicy
      */
     public function delete(User $user, Anime $anime): bool
     {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can restore the model.
-     */
-    public function restore(User $user, Anime $anime): bool
-    {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, Anime $anime): bool
-    {
-        return false;
+        return $user->isAdmin();
     }
 }

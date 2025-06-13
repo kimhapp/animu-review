@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::create('reviews', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('anime_id')->constrained('animes')->onDelete('cascade');
-            $table->longText('content');
-            $table->decimal('rating_amount', 1, 1)->default(0.0);
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('anime_id')->unique()->constrained('animes')->onDelete('cascade');
+            $table->text('content');
+            $table->decimal('rating_amount', 1, 1);
             $table->unsignedInteger('like_count')->default(0);
             $table->unsignedInteger('dislike_count')->default(0);
             $table->enum('status', ['pending', 'accepted', 'declined'])->default('pending');

@@ -29,7 +29,7 @@ class RatingPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -37,7 +37,7 @@ class RatingPolicy
      */
     public function update(User $user, Rating $rating): bool
     {
-        return false;
+        return $user->id === $rating->user_id;
     }
 
     /**
@@ -45,22 +45,6 @@ class RatingPolicy
      */
     public function delete(User $user, Rating $rating): bool
     {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can restore the model.
-     */
-    public function restore(User $user, Rating $rating): bool
-    {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, Rating $rating): bool
-    {
-        return false;
+        return $user->id === $rating->user_id || $user->isAdmin();
     }
 }

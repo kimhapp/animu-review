@@ -17,6 +17,8 @@ return new class extends Migration
             $table->foreignId('rating_id')->constrained('ratings')->onDelete('cascade');
             $table->enum('type', ['like', 'dislike']);
             $table->timestamps();
+
+            $table->unique(['user_id', 'rating_id']);
         });
     }
 

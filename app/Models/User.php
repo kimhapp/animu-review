@@ -28,6 +28,14 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'google_id',
+        'google_token',
+        'google_refresh_token',
+        'role',
+        'imageUrl',
+        'bannerUrl',
+        'follower_count',
+        'bio',
     ];
 
     /**
@@ -38,6 +46,8 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'google_token',
+        'google_refresh_token',
     ];
 
     /**
@@ -59,13 +69,48 @@ class User extends Authenticatable
         return $this->role === UserRole::Admin;
     }
 
-    public function isReviewer(): bool
+    public function isAboveUser(): bool
     {
-        return $this->role === UserRole::Reviewer;
+        return in_array($this->role, [UserRole::Reviewer, UserRole::Admin]);
     }
 
     public function isUser(): bool
     {
         return $this->role === UserRole::User;
+    }
+
+    public function favorites()
+    {
+        return $this->belongsToMany(Anime::class, 'favorites')->withTimestamps();
+    }
+
+    public function following()
+    {
+        return $this->belongsToMany(User::class, 'follows', 'user_id', 'target_id')->withTimestamps();
+    }
+
+    public function followers()
+    {
+        return $this->belongsToMany(User::class, 'follows', 'target_id', 'user_id')->withTimestamps();
+    }
+
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class);
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    public function reviewLikes()
+    {
+        return $this->hasMany(ReviewLike::class);
+    }
+
+    public function ratingLikes()
+    {
+        return $this->hasMany(RatingLike::class);
     }
 }

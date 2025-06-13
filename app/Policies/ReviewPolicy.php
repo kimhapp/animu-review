@@ -13,7 +13,7 @@ class ReviewPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,7 +21,7 @@ class ReviewPolicy
      */
     public function view(User $user, Review $review): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -29,7 +29,7 @@ class ReviewPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->isAboveUser();
     }
 
     /**
@@ -37,7 +37,7 @@ class ReviewPolicy
      */
     public function update(User $user, Review $review): bool
     {
-        return false;
+        return $user->isAboveUser();
     }
 
     /**
@@ -45,22 +45,6 @@ class ReviewPolicy
      */
     public function delete(User $user, Review $review): bool
     {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can restore the model.
-     */
-    public function restore(User $user, Review $review): bool
-    {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, Review $review): bool
-    {
-        return false;
+        return $user->isAboveUser();
     }
 }
