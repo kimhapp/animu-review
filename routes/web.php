@@ -12,6 +12,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
+<<<<<<< HEAD
 
     Route::get('/homepage', function () {
         return Inertia::render('home/homepage');
@@ -20,6 +21,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/lates', function () {
         return Inertia::render('home/lates');
     })->name('lates');
+=======
+>>>>>>> 77dbe4da881710b6c131ccec73cc600210785815
 });
 
 Route::get('/auth/redirect', [GoogleAuthController::class, 'redirect'])
