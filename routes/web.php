@@ -1,10 +1,12 @@
 <?php
 
+use App\Http\Controllers\Admin\AnimeController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\Home\HomeMainController;
 use App\Http\Controllers\Admin\CreateAnimeController;
+use App\Models\Anime;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -20,8 +22,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 Route::middleware(['auth', 'admin'])->group(function () {
-    Route::get('/admin/anime', [CreateAnimeController::class, 'create']);
-    Route::get('/admin/anime/genres', [CreateAnimeController::class, 'genres']);
+    Route::get('/admin/anime', [AnimeController::class, 'create']);
+    Route::get('/admin/anime/genres', [AnimeController::class, 'genres']);
 });
 
 Route::get('/auth/redirect', [GoogleAuthController::class, 'redirect'])
