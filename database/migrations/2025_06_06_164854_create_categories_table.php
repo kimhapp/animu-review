@@ -11,14 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('rating__likes', function (Blueprint $table) {
+        Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('rating_id')->constrained('ratings')->onDelete('cascade');
-            $table->enum('type', ['like', 'dislike']);
+            $table->string('name')->unique();
+            $table->text('description')->nullable();
             $table->timestamps();
-
-            $table->unique(['user_id', 'rating_id']);
         });
     }
 
@@ -27,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('rating__likes');
+        Schema::dropIfExists('types');
     }
 };

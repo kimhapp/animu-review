@@ -12,13 +12,9 @@ class AnimeController extends Controller
 {
     public function create() {
         return Inertia::render('admin/anime', [
-            'animes' => Anime::all()
+            'animes' => Anime::all(),
+            'genres' => Genre::all()
         ]);
-    }
-    
-    //
-    public function genres() {
-        return Genre::select('id', 'name')->get();
     }
 
     public function store(Request $request)  {

@@ -28,15 +28,15 @@ class Anime extends Model
      */
     public function genres()
     {
-        return $this->belongsToMany(Genre::class);
+        return $this->belongsToMany(Genre::class, 'anime_genres');
     }
 
     /**
      * Type of the anime (movie, series, etc.)
      */
-    public function type()
+    public function category()
     {
-        return $this->belongsTo(Type::class);
+        return $this->belongsTo(Category::class);
     }
 
     public function favoritedBy()

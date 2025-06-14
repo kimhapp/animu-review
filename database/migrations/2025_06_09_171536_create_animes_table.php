@@ -16,14 +16,13 @@ return new class extends Migration
             $table->string('title');
             $table->string('native_title');
             $table->text('description');
-            $table->decimal('user_rating', 1, 1)->default(0.0);
+            $table->decimal('user_rating', 2, 1);
             $table->date('release_date');
             $table->unsignedSmallInteger('duration');
             $table->string('director');
             $table->string('studio');
             $table->unsignedInteger('favorite_count')->default(0);
-            $table->foreignId('type_id')->constrained('types')->onDelete('cascade');
-            $table->foreignId('review_id')->constrained('reviews')->onDelete('cascade')->nullable();
+            $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
             $table->string('imageUrl')->nullable();
             $table->timestamps();
         }); 
