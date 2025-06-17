@@ -47,8 +47,8 @@ export default function AnimePage({ animes, genres, categories }: AnimeListProps
         break;
       case 'rating':
         filtered.sort((a, b) => {
-          const aRating = a.review ? a.review.rating + a.user_rating : a.user_rating * 2;
-          const bRating = b.review ? b.review.rating + b.user_rating : b.user_rating * 2;
+          const aRating = a.review ? a.review.rating_amount + a.user_rating : a.user_rating * 2;
+          const bRating = b.review ? b.review.rating_amount + b.user_rating : b.user_rating * 2;
           return bRating - aRating;
         });
         break;
@@ -156,7 +156,7 @@ export default function AnimePage({ animes, genres, categories }: AnimeListProps
                     ))}
                   </div>
                   <span className="text-xs bg-purple-600 px-2 py-1 rounded-full">
-                    ★ {anime.review ? anime.review.rating + anime.user_rating : anime.user_rating * 2}
+                    ★ {anime.review ? anime.review.rating_amount + anime.user_rating : anime.user_rating * 2}
                   </span>
                 </div>
               </div>

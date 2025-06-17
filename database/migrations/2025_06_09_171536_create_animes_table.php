@@ -18,10 +18,13 @@ return new class extends Migration
             $table->text('description');
             $table->decimal('user_rating', 2, 1);
             $table->date('release_date');
-            $table->unsignedSmallInteger('duration');
+            $table->unsignedSmallInteger('duration')->nullable();
+            $table->unsignedSmallInteger('total_episodes')->nullable();
+            $table->boolean('is_finished')->nullable();
             $table->string('director');
             $table->string('studio');
             $table->unsignedInteger('favorite_count')->default(0);
+            $table->unsignedInteger('view_count')->default(0);
             $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
             $table->string('imageUrl')->nullable();
             $table->timestamps();

@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Genre;
 use App\Models\Category;
+use App\Models\Country;
 
 class HomeMainController extends Controller
 {
@@ -24,6 +25,11 @@ class HomeMainController extends Controller
         // Filter by category
         if ($request->filled('category')) {
             $query->whereHas('category', fn($q) => $q->where('name', $request->category));
+        }
+
+        // Filter by country
+        if ($request->filled('country')) {
+            $query->whereHas('country', fn($q) => $q->where('name', $request->category));
         }
     
         // Filter by reviewed only
@@ -53,7 +59,8 @@ class HomeMainController extends Controller
     
         return Inertia::render('home/index', [
             'animes' => $query->with(['genres', 'category', 'review'])->get(),
-            'filters' => $request->only(['genre', 'category', 'sort', 'reviewed_only']),
+            'filters' => $request->only(['genre', 'category', 'country', 'sort', 'reviewed_only']),
+            'countries' => Country::all(),
             'genres' => Genre::all(),
             'categories' => Category::all()
         ]);

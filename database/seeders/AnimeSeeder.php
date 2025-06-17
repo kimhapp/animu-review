@@ -10,7 +10,6 @@ class AnimeSeeder extends Seeder
 {
     public function run()
     {
-        // Assuming categories are already seeded, get category IDs
         $categoryIds = DB::table('categories')->pluck('id', 'name');
 
         $animes = [
@@ -20,14 +19,14 @@ class AnimeSeeder extends Seeder
                 'description' => 'Humans fight against gigantic humanoid Titans.',
                 'user_rating' => 9.0,
                 'release_date' => '2013-04-07',
-                'duration' => 24,
+                'duration' => null,
+                'total_episodes' => 75,
+                'is_finished' => true,
                 'director' => 'Tetsurō Araki',
                 'studio' => 'Wit Studio',
                 'favorite_count' => 5000,
                 'category_id' => $categoryIds['TV'],
                 'imageUrl' => 'https://example.com/images/aot.jpg',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
             ],
             [
                 'title' => 'Your Name',
@@ -36,29 +35,28 @@ class AnimeSeeder extends Seeder
                 'user_rating' => 9.2,
                 'release_date' => '2016-08-26',
                 'duration' => 106,
+                'total_episodes' => null,
+                'is_finished' => null,
                 'director' => 'Makoto Shinkai',
                 'studio' => 'CoMix Wave Films',
                 'favorite_count' => 8000,
                 'category_id' => $categoryIds['Movie'],
                 'imageUrl' => 'https://example.com/images/yourname.jpg',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
             ],
-            // Add 8 more anime entries similarly:
             [
                 'title' => 'Fullmetal Alchemist: Brotherhood',
                 'native_title' => '鋼の錬金術師 FULLMETAL ALCHEMIST',
                 'description' => 'Two brothers search for the Philosopher\'s Stone.',
                 'user_rating' => 9.1,
                 'release_date' => '2009-04-05',
-                'duration' => 24,
+                'duration' => null,
+                'total_episodes' => 64,
+                'is_finished' => true,
                 'director' => 'Yasuhiro Irie',
                 'studio' => 'Bones',
                 'favorite_count' => 7000,
                 'category_id' => $categoryIds['TV'],
                 'imageUrl' => 'https://example.com/images/fma.jpg',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
             ],
             [
                 'title' => 'Demon Slayer',
@@ -66,14 +64,14 @@ class AnimeSeeder extends Seeder
                 'description' => 'A boy becomes a demon slayer to save his sister.',
                 'user_rating' => 8.9,
                 'release_date' => '2019-04-06',
-                'duration' => 24,
+                'duration' => null,
+                'total_episodes' => 26,
+                'is_finished' => false,
                 'director' => 'Haruo Sotozaki',
                 'studio' => 'ufotable',
                 'favorite_count' => 6000,
                 'category_id' => $categoryIds['TV'],
                 'imageUrl' => 'https://example.com/images/demonslayer.jpg',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
             ],
             [
                 'title' => 'One Punch Man',
@@ -81,14 +79,14 @@ class AnimeSeeder extends Seeder
                 'description' => 'A superhero who defeats enemies with one punch.',
                 'user_rating' => 8.7,
                 'release_date' => '2015-10-05',
-                'duration' => 24,
+                'duration' => null,
+                'total_episodes' => 24,
+                'is_finished' => false,
                 'director' => 'Shingo Natsume',
                 'studio' => 'Madhouse',
                 'favorite_count' => 5500,
                 'category_id' => $categoryIds['TV'],
                 'imageUrl' => 'https://example.com/images/opm.jpg',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
             ],
             [
                 'title' => 'Naruto',
@@ -96,14 +94,14 @@ class AnimeSeeder extends Seeder
                 'description' => 'A young ninja seeks recognition and dreams to become Hokage.',
                 'user_rating' => 8.3,
                 'release_date' => '2002-10-03',
-                'duration' => 23,
+                'duration' => null,
+                'total_episodes' => 220,
+                'is_finished' => true,
                 'director' => 'Hayato Date',
                 'studio' => 'Pierrot',
                 'favorite_count' => 9000,
                 'category_id' => $categoryIds['TV'],
                 'imageUrl' => 'https://example.com/images/naruto.jpg',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
             ],
             [
                 'title' => 'Spirited Away',
@@ -112,13 +110,13 @@ class AnimeSeeder extends Seeder
                 'user_rating' => 9.3,
                 'release_date' => '2001-07-20',
                 'duration' => 125,
+                'total_episodes' => null,
+                'is_finished' => null,
                 'director' => 'Hayao Miyazaki',
                 'studio' => 'Studio Ghibli',
                 'favorite_count' => 8500,
                 'category_id' => $categoryIds['Movie'],
                 'imageUrl' => 'https://example.com/images/spiritedaway.jpg',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
             ],
             [
                 'title' => 'Death Note',
@@ -126,14 +124,14 @@ class AnimeSeeder extends Seeder
                 'description' => 'A notebook allows killing anyone whose name is written in it.',
                 'user_rating' => 9.0,
                 'release_date' => '2006-10-04',
-                'duration' => 37,
+                'duration' => null,
+                'total_episodes' => 37,
+                'is_finished' => true,
                 'director' => 'Tetsurō Araki',
                 'studio' => 'Madhouse',
                 'favorite_count' => 7800,
                 'category_id' => $categoryIds['TV'],
                 'imageUrl' => 'https://example.com/images/deathnote.jpg',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
             ],
             [
                 'title' => 'My Hero Academia',
@@ -141,14 +139,14 @@ class AnimeSeeder extends Seeder
                 'description' => 'A boy dreams of becoming a hero in a superpowered world.',
                 'user_rating' => 8.4,
                 'release_date' => '2016-04-03',
-                'duration' => 24,
+                'duration' => null,
+                'total_episodes' => 113,
+                'is_finished' => false,
                 'director' => 'Kenji Nagasaki',
                 'studio' => 'Bones',
                 'favorite_count' => 6400,
                 'category_id' => $categoryIds['TV'],
                 'imageUrl' => 'https://example.com/images/mha.jpg',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
             ],
             [
                 'title' => 'Tokyo Ghoul',
@@ -156,16 +154,37 @@ class AnimeSeeder extends Seeder
                 'description' => 'A college student becomes a half-ghoul after an attack.',
                 'user_rating' => 7.9,
                 'release_date' => '2014-07-04',
-                'duration' => 24,
+                'duration' => null,
+                'total_episodes' => 12,
+                'is_finished' => true,
                 'director' => 'Shūhei Morita',
                 'studio' => 'Pierrot',
                 'favorite_count' => 4800,
                 'category_id' => $categoryIds['TV'],
                 'imageUrl' => 'https://example.com/images/tokyoghoul.jpg',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
             ],
         ];
+
+        $now = Carbon::now();
+
+        foreach ($animes as &$anime) {
+            // Convert rating to 5-point scale
+            $anime['user_rating'] = round($anime['user_rating'] / 2, 1);
+
+            // If it's a movie (duration exists), remove episode-related fields
+            if (!is_null($anime['duration'])) {
+                $anime['total_episodes'] = null;
+                $anime['is_finished'] = null;
+            }
+
+            // Cast is_finished to boolean (for PostgreSQL)
+            if (!is_null($anime['is_finished'])) {
+                $anime['is_finished'] = (bool) $anime['is_finished'];
+            }
+
+            $anime['created_at'] = $now;
+            $anime['updated_at'] = $now;
+        }
 
         DB::table('animes')->insert($animes);
     }

@@ -18,6 +18,6 @@ class AnimeController extends Controller
     }
 
     public function store(Request $request)  {
-
+        
     }
 }

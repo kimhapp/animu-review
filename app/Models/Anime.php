@@ -53,4 +53,9 @@ class Anime extends Model
     {
         return $this->hasOne(Review::class);
     }
+
+    public function country()
+    {
+        return $this->hasOne(Country::class);
+    }
 }

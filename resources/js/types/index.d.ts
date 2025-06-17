@@ -78,7 +78,7 @@ export type Category = {
     description?: string | null;
 };
 
-export type Review = { rating: number };
+export type Review = { rating_amount: number };
 
 type Paginated<T> = {
     data: T[];
