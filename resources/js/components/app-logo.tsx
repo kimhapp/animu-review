@@ -2,13 +2,12 @@ import AppLogoIcon from './app-logo-icon';
 
 export default function AppLogo() {
     return (
-        <>
-            <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-md">
-                <AppLogoIcon className="size-5 fill-current text-white dark:text-black" />
+        <div className="flex items-center space-x-2">
+            <div className="grid flex-1 text-left text-sm pointer-events-none select-none">
+                <span className="italic font-semibold text-2xl bg-gradient-to-t from-red-500 via-blue-500 to-white bg-clip-text text-transparent">
+                    AnimuReview
+                </span>
             </div>
-            <div className="ml-1 grid flex-1 text-left text-sm">
-                <span className="mb-0.5 truncate leading-none font-semibold">Laravel Starter Kit</span>
-            </div>
-        </>
+        </div>
     );
 }

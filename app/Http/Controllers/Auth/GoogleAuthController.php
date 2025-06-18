@@ -46,7 +46,7 @@ class GoogleAuthController extends Controller
     
             Auth::login($user, true);
     
-            return redirect('/dashboard');
+            return redirect()->route('home.index');
     
         } catch (\Exception $e) {
             return redirect('/login')->withErrors([
