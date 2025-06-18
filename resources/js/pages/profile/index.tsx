@@ -141,7 +141,7 @@ export default function ProfilePage({ user, favoriteAnime, reviewedAnime }: Prof
                     <span className="text-xs bg-purple-600 px-2 py-1 rounded-full">
                       ★{' '}
                       {anime.review
-                        ? anime.review.rating + anime.user_rating
+                        ? anime.review.rating_amount + anime.user_rating
                         : anime.user_rating * 2}
                     </span>
                   </div>

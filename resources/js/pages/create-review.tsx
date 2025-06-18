@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { Head } from '@inertiajs/react';
+import { Input } from '@/components/ui/input';
 
 export default function RateAndReview() {
   const [selectedAnime, setSelectedAnime] = useState('');
@@ -76,7 +77,7 @@ export default function RateAndReview() {
 
             {/* Rating */}
             <label htmlFor="rating" className="block mb-2">Rating (1 - 5)</label>
-            <input
+            <Input
               type="number"
               id="rating"
               min={1}

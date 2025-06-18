@@ -2,6 +2,7 @@ import AppLayout from '@/layouts/app-layout';
 import { Link } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
 import { Anime, AnimeListProps } from '@/types';
+import { Label } from '@/components/ui/label';
 
 export default function AnimePage({ animes, genres, categories }: AnimeListProps) {
   const [selectedGenre, setSelectedGenre] = useState('');
@@ -71,7 +72,7 @@ export default function AnimePage({ animes, genres, categories }: AnimeListProps
         <div className="grid gap-6 md:grid-cols-4 mb-10">
           {/* Genre Filter */}
           <div>
-            <label className="text-sm text-gray-300">Genre</label>
+            <Label className="text-sm text-gray-300">Genre</Label>
             <select
               className="mt-1 w-full bg-gray-800 border border-gray-700 rounded px-3 py-2"
               value={selectedGenre}
@@ -86,7 +87,7 @@ export default function AnimePage({ animes, genres, categories }: AnimeListProps
 
           {/* Category Filter */}
           <div>
-            <label className="text-sm text-gray-300">Category</label>
+            <Label className="text-sm text-gray-300">Category</Label>
             <select
               className="mt-1 w-full bg-gray-800 border border-gray-700 rounded px-3 py-2"
               value={selectedCategory}

@@ -62,7 +62,7 @@ export default function Homepage({similarAnime }: Props) {
             <main className="p-8">
               {/* Comment & Similar Anime */}
               <section className="mb-12">
-                <h2 className="text-lg font-semibold mb-2">Comment &amp; Similar Anime</h2>
+                <h2 className="text-lg font-semibold mb-2">a &amp; Similar Anime</h2>
                 <hr className="border-gray-700 mb-6" />
                     
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
