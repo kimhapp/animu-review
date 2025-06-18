@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('native_title');
+            $table->foreignId('country')->constrained('countries')->onDelete('cascade');
             $table->text('description');
             $table->decimal('user_rating', 2, 1);
             $table->date('release_date');

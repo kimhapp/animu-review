@@ -12,13 +12,17 @@ class Anime extends Model
     protected $fillable = [
         'title',
         'native_title',
+        'country',
         'description',
         'user_rating',
         'release_date',
         'duration',
+        'total_episodes',
+        'is_finished',
         'director',
         'studio',
         'favorite_count',
+        'view_count',
         'type_id',
         'imageUrl',
     ];
