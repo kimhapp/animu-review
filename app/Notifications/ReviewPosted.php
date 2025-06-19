@@ -8,7 +8,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use App\Models\Review;
 
-class ReviewPosted extends Notification
+class ReviewPosted extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -37,14 +37,14 @@ class ReviewPosted extends Notification
      */
     public function toMail($notifiable)
     {
-        $url = route('reviews.show', $this->review->id);
+        $url = route('home.show', $this->review->id);
 
         return (new MailMessage)
             ->subject('New Review Posted')
             ->greeting("Hi {$notifiable->name},")
-            ->line("{$this->review->user->name} posted a new review.")
+            ->line("{$this->review->user->name} posted a new review on {$this->review->anime->title}.")
             ->action('View Review', $url)
-            ->line('Thank you for using our app!');
+            ->line('Thank you for using our website!');
     }
     
     public function toDatabase($notifiable)
@@ -54,7 +54,7 @@ class ReviewPosted extends Notification
             'reviewer_id' => $this->review->user_id,
             'reviewer_name' => $this->review->user->name,
             'anime_id' => $this->review->anime_id,
-            'message' => "{$this->review->user->name} posted a new review.",
+            'message' => "{$this->review->user->name} posted a new review on {$this->review->anime->title}.",
         ];
     }
 

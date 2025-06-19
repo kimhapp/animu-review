@@ -2,18 +2,18 @@
 
 namespace App\Http\Requests\Profile;
 
-use App\Models\User;
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Auth;
 
 class ProfileUpdateRequest extends FormRequest
 {
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, ValidationRule|array<mixed>|string>
-     */
+    public function authorize(): bool
+    {
+        // Any authenticated user can update their profile
+        return Auth::check();
+    }
+
     public function rules(): array
     {
         return [
@@ -22,11 +22,15 @@ class ProfileUpdateRequest extends FormRequest
             'email' => [
                 'required',
                 'string',
-                'lowercase',
                 'email',
                 'max:255',
-                Rule::unique(User::class)->ignore($this->user()->id),
+                Rule::unique('users', 'email')->ignore($this->user()->id),
             ],
+
+            'imageUrl' => ['nullable', 'string', 'url', 'max:2048'],
+            'bio' => ['nullable', 'string'],
+            'bannerUrl' => ['nullable', 'string', 'url', 'max:2048'],
+            'password' => ['nullable', 'string', 'min:8', 'confirmed'], // optional change with confirmation
         ];
     }
 }

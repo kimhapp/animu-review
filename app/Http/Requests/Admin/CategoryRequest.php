@@ -3,6 +3,8 @@
 namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+use Auth;
 
 class CategoryRequest extends FormRequest
 {
@@ -11,7 +13,7 @@ class CategoryRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return Auth::check() && Auth::user()->role === 'admin';
     }
 
     /**
@@ -23,9 +25,13 @@ class CategoryRequest extends FormRequest
     {
         //
         $categoryId = $this->route('category')?->id;
-        
+
         return [
-            'name' => ['required', 'string', 'unique:categories,name,' . $categoryId],
+            'name' => [
+                'required',
+                'string',
+                Rule::unique('categories', 'name')->ignore($categoryId),
+            ],
             'description' => ['nullable', 'string'],
         ];
     }

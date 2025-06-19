@@ -3,26 +3,23 @@
 namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+use Auth;
 
 class CountryRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
-        return false;
+        // Adjust this as needed — e.g., only admin users can manage countries
+        return Auth::check() && Auth::user()->role === 'admin';
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
+        $countryId = $this->route('country')->id;
+
         return [
-            //
+            'name' => ['required', 'string', 'max:255', Rule::unique('countries', 'name')->ignore($countryId)],
         ];
     }
 }

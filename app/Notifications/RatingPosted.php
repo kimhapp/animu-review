@@ -6,17 +6,20 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use App\Models\Rating;
 
-class RatingPosted extends Notification
+class RatingPosted extends Notification implements ShouldQueue
 {
     use Queueable;
+
+    protected $rating;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct()
+    public function __construct(Rating $rating)
     {
-        
+        $this->rating = $rating;
     }
 
     /**
@@ -26,18 +29,18 @@ class RatingPosted extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['database'];
     }
 
-    /**
-     * Get the mail representation of the notification.
-     */
-    public function toMail(object $notifiable): MailMessage
+    public function toDatabase($notifiable)
     {
-        return (new MailMessage)
-            ->line('The introduction to the notification.')
-            ->action('Notification Action', url('/'))
-            ->line('Thank you for using our application!');
+        return [
+            'rating_id' => $this->rating->id, 
+            'user_id' => $this->rating->user_id,
+            'user_name' => $this->rating->user->name,
+            'anime_id' => $this->rating->anime_id,
+            'message' => "{$this->rating->user->name} posted a new rating on {$this->rating->anime->title}.",
+        ];
     }
 
     /**
