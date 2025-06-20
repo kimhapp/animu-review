@@ -15,7 +15,7 @@ Route::get('/', function () {
     return Inertia::render('welcome');
 })->name('welcome');
 
-Route::prefix('home')->group(function () {
+Route::prefix('home' )->group(function () {
     Route::get('/', [HomeMainController::class, 'create'])->name('home.index');
     Route::get('{id}', [ShowAnimeController::class, 'create'])->name('home.show');
 });

@@ -1,107 +1,334 @@
 import { Head, Link, usePage } from '@inertiajs/react';
 import { Anime } from '@/types';
-import { useState, useEffect } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import AppLayout from '@/layouts/app-layout';
+import { Heart, Bell, Star, Play, Calendar, Users, Clock, Eye } from 'lucide-react';
 
 interface Props {
   similarAnime: Anime[];
+  latestAnime: Anime[];
+  selectedAnime: Anime;
 }
 
-export default function Homepage({similarAnime }: Props) {
-  const { props } = usePage<{ selectedAnime: Anime }>();
-  const animeToShow = props.selectedAnime;
+export default function Homepage({ similarAnime, latestAnime, selectedAnime }: Props) {
+  const animeToShow = selectedAnime;
+  
+  const [isFavorited, setIsFavorited] = useState(false);
+  const [isNotificationEnabled, setIsNotificationEnabled] = useState(false);
+  const [showMoreSimilar, setShowMoreSimilar] = useState(false);
+  const [showMoreLatest, setShowMoreLatest] = useState(false);
 
-  const getTimeAgo = (dateString: string) => {
+  // Memoize displayed arrays to prevent unnecessary re-renders
+  const displayedSimilar = useMemo(
+    () => showMoreSimilar ? similarAnime : similarAnime.slice(0, 5),
+    [showMoreSimilar, similarAnime]
+  );
+  
+  const displayedLatest = useMemo(
+    () => showMoreLatest ? latestAnime : latestAnime.slice(0, 5),
+    [showMoreLatest, latestAnime]
+  );
+
+  const getTimeAgo = useCallback((dateString: string): string => {
     const date = new Date(dateString);
     const now = new Date();
     const diffTime = Math.abs(now.getTime() - date.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     const diffYears = Math.floor(diffDays / 365);
 
-    if (diffYears > 0) return `${diffYears} year${diffYears > 1 ? 's' : ''} ago`;
+    if (diffYears > 0) {
+      return `${diffYears} year${diffYears > 1 ? 's' : ''} ago`;
+    }
     return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
-  };
+  }, []);
+
+  const handleFavorite = useCallback(() => {
+    setIsFavorited(prev => !prev);
+    // TODO: Add API call here to update favorite status
+    // Example: await updateFavoriteStatus(animeToShow.id, !isFavorited);
+  }, []);
+
+  const handleNotification = useCallback(() => {
+    setIsNotificationEnabled(prev => !prev);
+    // TODO: Add API call here to update notification status
+    // Example: await updateNotificationStatus(animeToShow.id, !isNotificationEnabled);
+  }, []);
+
+  const renderStars = useCallback((rating: number) => {
+    const stars = [];
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 !== 0;
+    
+    // Render full stars
+    for (let i = 0; i < fullStars; i++) {
+      stars.push(
+        <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+      );
+    }
+    
+    // Render half star if needed
+    if (hasHalfStar) {
+      stars.push(
+        <Star key="half" className="w-4 h-4 fill-yellow-400/50 text-yellow-400" />
+      );
+    }
+    
+    // Render empty stars
+    const emptyStars = 5 - Math.ceil(rating);
+    for (let i = 0; i < emptyStars; i++) {
+      stars.push(
+        <Star key={`empty-${i}`} className="w-4 h-4 text-gray-400" />
+      );
+    }
+    
+    return stars;
+  }, []);
+
+  const calculateRating = useCallback((anime: Anime): number => {
+    if (anime.review) {
+      return anime.review.rating_amount + anime.user_rating;
+    }
+    return anime.user_rating * 2;
+  }, []);
+
+  const AnimeCard = useCallback(({ anime }: { anime: Anime }) => (
+    <Link
+      key={anime.id}
+      href={route('home.show', anime.id)}
+      className="bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:ring-2 ring-purple-400 hover:scale-105 transition-all duration-300"
+    >
+      <img 
+        src={anime.imageUrl} 
+        alt={anime.title} 
+        className="w-full h-64 object-cover"
+        loading="lazy"
+      />
+      <div className="p-4">
+        <h3 className="text-sm font-semibold mb-2 truncate" title={anime.title}>
+          {anime.title}
+        </h3>
+        <div className="text-xs text-gray-400 flex justify-between mb-3">
+          <span className="truncate" title={anime.studio}>
+            {anime.studio}
+          </span>
+          <span>{anime.release_date?.split('-')[0] || 'N/A'}</span>
+        </div>
+        <div className="flex justify-between items-center">
+          <div className="flex flex-wrap gap-1">
+            {anime.genres?.slice(0, 2).map(genre => (
+              <span
+                key={genre.id}
+                className="text-[10px] bg-gray-700 px-2 py-1 rounded-full"
+                title={genre.name}
+              >
+                {genre.name}
+              </span>
+            ))}
+          </div>
+          <span className="text-[10px] bg-purple-600 px-2 py-1 rounded-full">
+            ★ {calculateRating(anime).toFixed(1)}
+          </span>
+        </div>
+      </div>
+    </Link>
+  ), [calculateRating]);
+
+  if (!animeToShow) {
+    return (
+      <AppLayout>
+        <Head title="Homepage - AnimeRevu" />
+        <div className="min-h-screen bg-[#1E1A2B] text-white font-sans flex items-center justify-center">
+          <div className="text-center">
+            <h1 className="text-4xl font-bold mb-4">No Anime Selected</h1>
+            <p className="text-gray-400">Please select an anime to view details.</p>
+          </div>
+        </div>
+      </AppLayout>
+    );
+  }
 
   return (
-    <>
     <AppLayout>
-        <Head title="Homepage - AnimeRevu" />
-          <div className="min-h-screen bg-[#1E1A2B] text-white font-sans">
-            {/* Hero Section */}
-            <section
-              className="relative h-[500px] bg-cover bg-center bg-no-repeat"
-              style={{ backgroundImage: `url('${animeToShow.imageUrl}')` }}
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-[#1E1A2B]/90 via-[#1E1A2B]/30 to-transparent flex items-center pl-8 max-w-[500px] text-white">
-                <div>
-                  <h1 className="text-5xl font-bold mb-4 leading-tight">{animeToShow.title}</h1>
-                  <p className="text-sm text-gray-300 mb-6 leading-relaxed">{animeToShow.description}</p>
-    
-                  <div className="mb-6 text-xs text-gray-400 leading-snug space-y-1">
-                    <p>Japanese Title: {animeToShow.nativeTitle}</p>
-                    <p>Category: {animeToShow.category.name}</p>
-                    <p>Studios: {animeToShow.studio}</p>
-                    <p>
-                      Date aired: {animeToShow.release_date} (
-                      {getTimeAgo(animeToShow.release_date)})
-                    </p>
-                    <p>
-                      Genre: {animeToShow.genres.map(g => g.name).join(', ')}
-                    </p>
-                  </div>
-                    
-                  <div className="mb-6">
-                    <div className="text-xs text-gray-400">User Rating</div>
-                    <div className="font-bold text-lg">{animeToShow.user_rating}/5 ★★★★★</div>
-                  </div>
+      <Head title={`${animeToShow.title} - AnimeRevu`} />
+      <div className="min-h-screen bg-[#1E1A2B] text-white font-sans">
+        {/* Hero Section */}
+        <section
+          className="relative h-[600px] bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url('${animeToShow.imageUrl}')` }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-[#1E1A2B]/95 via-[#1E1A2B]/70 to-transparent">
+            <div className="flex items-center h-full px-8 max-w-7xl mx-auto">
+              <div className="flex gap-8 items-center w-full">
+                {/* Anime Poster */}
+                <div className="flex-shrink-0">
+                  <img
+                    src={animeToShow.imageUrl}
+                    alt={animeToShow.title}
+                    className="w-80 h-96 object-cover rounded-lg shadow-2xl"
+                  />
                 </div>
-              </div>
-            </section>
-                    
-            {/* Content */}
-            <main className="p-8">
-              {/* Comment & Similar Anime */}
-              <section className="mb-12">
-                <h2 className="text-lg font-semibold mb-2">a &amp; Similar Anime</h2>
-                <hr className="border-gray-700 mb-6" />
-                    
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {similarAnime.map(anime => (
-                    <Link
-                      key={anime.id}
-                      href={route('home.show', anime.id)}
-                      className="bg-gray-800 rounded-lg overflow-hidden shadow hover:ring-2 ring-purple-500 transition"
-                    >
-                      <img src={anime.imageUrl} alt={anime.title} className="w-full h-72 object-cover" />
-                      <div className="p-4">
-                        <h3 className="text-lg font-semibold">{anime.title}</h3>
-                        <div className="text-sm text-gray-400 flex justify-between mt-1">
-                          <span>{anime.studio}</span>
-                          <span>{anime.release_date?.split('-')[0]}</span>
-                        </div>
-                        <div className="flex justify-between items-center mt-4">
-                          <div className="flex flex-wrap gap-1">
-                            {anime.genres?.map(g => (
-                              <span
-                                key={g.id}
-                                className="text-xs bg-gray-700 px-3 py-1 rounded-full"
-                              >
-                                {g.name}
-                              </span>
-                            ))}
-                          </div>
-                          <span className="text-xs bg-purple-600 px-2 py-1 rounded-full">
-                            ★ {anime.review ? anime.review.rating_amount + anime.user_rating : anime.user_rating * 2}
+
+                {/* Anime Details */}
+                <div className="flex-1 max-w-2xl">
+                  <h1 className="text-6xl font-bold mb-6 leading-tight">
+                    {animeToShow.title}
+                  </h1>
+                  <p className="text-lg text-gray-300 mb-8 leading-relaxed">
+                    {animeToShow.description}
+                  </p>
+
+                  {/* Anime Info Grid */}
+                  <div className="grid grid-cols-2 gap-6 mb-8 text-sm">
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2">
+                        <Calendar className="w-4 h-4 text-purple-400" />
+                        <span className="text-gray-400">Japanese Title:</span>
+                        <span className="truncate">{animeToShow.nativeTitle}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Users className="w-4 h-4 text-purple-400" />
+                        <span className="text-gray-400">Category:</span>
+                        <span>{animeToShow.category?.name || 'N/A'}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Play className="w-4 h-4 text-purple-400" />
+                        <span className="text-gray-400">Studios:</span>
+                        <span className="truncate">{animeToShow.studio}</span>
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2">
+                        <Clock className="w-4 h-4 text-purple-400" />
+                        <span className="text-gray-400">Date aired:</span>
+                        <span>
+                          {animeToShow.release_date} ({getTimeAgo(animeToShow.release_date)})
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Eye className="w-4 h-4 text-purple-400" />
+                        <span className="text-gray-400">Genre:</span>
+                        <span className="truncate">
+                          {animeToShow.genres?.map(g => g.name).join(', ') || 'N/A'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Rating Section */}
+                  <div className="mb-8">
+                    <div className="flex items-center gap-4 mb-4">
+                      <div>
+                        <div className="text-sm text-gray-400 mb-1">User Rating</div>
+                        <div className="flex items-center gap-2">
+                          <div className="flex">{renderStars(animeToShow.user_rating)}</div>
+                          <span className="font-bold text-xl">
+                            {animeToShow.user_rating.toFixed(1)}/5
                           </span>
                         </div>
                       </div>
-                    </Link>
-                  ))}
+                      {animeToShow.review && (
+                        <div>
+                          <div className="text-sm text-gray-400 mb-1">Review Rating</div>
+                          <div className="flex items-center gap-2">
+                            <div className="flex">
+                              {renderStars(animeToShow.review.rating_amount)}
+                            </div>
+                            <span className="font-bold text-xl">
+                              {animeToShow.review.rating_amount.toFixed(1)}/5
+                            </span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-4">
+                    <button
+                      onClick={handleFavorite}
+                      className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all ${
+                        isFavorited
+                          ? 'bg-red-600 hover:bg-red-700 text-white'
+                          : 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+                      }`}
+                      aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
+                    >
+                      <Heart className={`w-5 h-5 ${isFavorited ? 'fill-current' : ''}`} />
+                      {isFavorited ? 'Favorited' : 'Add to Favorites'}
+                    </button>
+                    
+                    {!animeToShow.review && (
+                      <button
+                        onClick={handleNotification}
+                        className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all ${
+                          isNotificationEnabled
+                            ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                            : 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+                        }`}
+                        aria-label={isNotificationEnabled ? 'Disable notifications' : 'Enable notifications'}
+                      >
+                        <Bell className={`w-5 h-5 ${isNotificationEnabled ? 'fill-current' : ''}`} />
+                        {isNotificationEnabled ? 'Notifications On' : 'Notify Me'}
+                      </button>
+                    )}
+                  </div>
                 </div>
-              </section>
-            </main>
+              </div>
+            </div>
           </div>
+        </section>
+
+        {/* Content */}
+        <main className="p-8 max-w-7xl mx-auto">
+          {/* Similar Anime Section */}
+          {similarAnime.length > 0 && (
+            <section className="mb-12">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-2xl font-bold">Similar Anime</h2>
+                {similarAnime.length > 5 && (
+                  <button
+                    onClick={() => setShowMoreSimilar(prev => !prev)}
+                    className="text-purple-400 hover:text-purple-300 font-semibold transition-colors"
+                  >
+                    {showMoreSimilar ? 'Show Less' : 'See More'}
+                  </button>
+                )}
+              </div>
+              <hr className="border-gray-700 mb-6" />
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                {displayedSimilar.map(anime => (
+                  <AnimeCard key={anime.id} anime={anime} />
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Latest Anime Section */}
+          {latestAnime.length > 0 && (
+            <section className="mb-12">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-2xl font-bold">Latest Anime</h2>
+                {latestAnime.length > 5 && (
+                  <button
+                    onClick={() => setShowMoreLatest(prev => !prev)}
+                    className="text-purple-400 hover:text-purple-300 font-semibold transition-colors"
+                  >
+                    {showMoreLatest ? 'Show Less' : 'See More'}
+                  </button>
+                )}
+              </div>
+              <hr className="border-gray-700 mb-6" />
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                {displayedLatest.map(anime => (
+                  <AnimeCard key={anime.id} anime={anime} />
+                ))}
+              </div>
+            </section>
+          )}
+        </main>
+      </div>
     </AppLayout>
-    </>
   );
 }
