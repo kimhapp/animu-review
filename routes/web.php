@@ -31,8 +31,13 @@ Route::middleware(['auth', 'admin'])->group(function () {
         return Inertia::render('admin/category');
     })->name('admin.category');
     
-    Route::get('admin/genre', [DashboardController::class, 'create'])
-        ->name('admin.genre');
+    Route::get('admin/genre', function () {
+        return Inertia::render('admin/genre');
+    })->name('admin.genre'); 
+    
+    Route::get('admin/country', function () {
+        return Inertia::render('admin/country');
+    })->name('admin.country');  
 
     Route::get('admin/reviewer', function () {
         return Inertia::render('admin/reviewer');

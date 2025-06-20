@@ -86,6 +86,10 @@ type Paginated<T> = {
     last_page: number;
     next_page_url: string | null;
 };
+export type Country = {
+    id: number;
+    name: string;
+};
 
 export interface ProfilePageProps {
     user: User;
