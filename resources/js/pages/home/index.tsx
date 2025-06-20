@@ -11,8 +11,21 @@ export default function AnimePage({ animes, genres, categories }: AnimeListProps
   const [reviewedOnly, setReviewedOnly] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredAnime, setFilteredAnime] = useState<Anime[]>([]);
+  
+  // Review modal states
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [selectedAnime, setSelectedAnime] = useState<Anime | null>(null);
+  const [reviewData, setReviewData] = useState({
+    rating: 0,
+    reviewText: '',
+    reviewerName: '',
+    isRecommended: true
+  });
+  
+  // Rating hover state
+  const [hoverRating, setHoverRating] = useState(0);
 
-  // Extract unique countries from animes (assuming country exists or using a fallback)
+  // Extract unique countries from animes
   const countries = [...new Set(animes.map(anime => (anime as any).country).filter(Boolean))];
 
   useEffect(() => {
@@ -78,12 +91,137 @@ export default function AnimePage({ animes, genres, categories }: AnimeListProps
         });
         break;
       default:
-        // Keep original order if no sort is selected
         break;
     }
 
     setFilteredAnime(filtered);
   }, [animes, selectedGenre, selectedCategory, reviewedOnly, sortOrder, searchQuery]);
+
+  const openReviewModal = (anime: Anime) => {
+    setSelectedAnime(anime);
+    setShowReviewModal(true);
+    // Reset form
+    setReviewData({
+      rating: 0,
+      reviewText: '',
+      reviewerName: '',
+      isRecommended: true
+    });
+    setHoverRating(0);
+  };
+
+  const closeReviewModal = () => {
+    setShowReviewModal(false);
+    setSelectedAnime(null);
+    setHoverRating(0);
+  };
+
+  const handleReviewSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Here you would typically send the review data to your backend
+    console.log('Review submitted:', {
+      animeId: selectedAnime?.id,
+      ...reviewData
+    });
+    
+    // Show success message (you can replace this with a proper notification)
+    alert('Review submitted successfully!');
+    closeReviewModal();
+  };
+
+  const StarRating = ({ 
+    rating, 
+    onRatingChange, 
+    onHover, 
+    hoverRating, 
+    size = 'w-6 h-6',
+    interactive = true 
+  }: {
+    rating: number;
+    onRatingChange?: (rating: number) => void;
+    onHover?: (rating: number) => void;
+    hoverRating?: number;
+    size?: string;
+    interactive?: boolean;
+  }) => {
+    return (
+      <div className="flex gap-1">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <button
+            key={star}
+            type="button"
+            disabled={!interactive}
+            className={`${size} ${interactive ? 'cursor-pointer hover:scale-110' : 'cursor-default'} transition-transform`}
+            onClick={() => interactive && onRatingChange?.(star)}
+            onMouseEnter={() => interactive && onHover?.(star)}
+            onMouseLeave={() => interactive && onHover?.(0)}
+          >
+            <svg
+              className={`w-full h-full ${
+                star <= (hoverRating || rating)
+                  ? 'text-yellow-400 fill-current'
+                  : 'text-gray-400'
+              }`}
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
+              />
+            </svg>
+          </button>
+        ))}
+      </div>
+    );
+  };
+
+  const QuickRating = ({ anime }: { anime: Anime }) => {
+    const [quickRating, setQuickRating] = useState(0);
+    const [showQuickRating, setShowQuickRating] = useState(false);
+
+    const handleQuickRate = (rating: number) => {
+      setQuickRating(rating);
+      // Here you would send the quick rating to your backend
+      console.log('Quick rating:', { animeId: anime.id, rating });
+      
+      // Hide after a delay
+      setTimeout(() => {
+        setShowQuickRating(false);
+      }, 2000);
+    };
+
+    return (
+      <div className="relative">
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setShowQuickRating(!showQuickRating);
+          }}
+          className="text-xs bg-blue-600 hover:bg-blue-700 px-2 py-1 rounded-full transition-colors"
+        >
+          ⚡ Quick Rate
+        </button>
+        
+        {showQuickRating && (
+          <div className="absolute top-8 left-0 z-20 bg-gray-800 border border-gray-600 rounded-lg p-3 shadow-xl min-w-max">
+            <p className="text-xs text-gray-300 mb-2">Rate this anime:</p>
+            <StarRating
+              rating={quickRating}
+              onRatingChange={handleQuickRate}
+              size="w-4 h-4"
+            />
+            {quickRating > 0 && (
+              <p className="text-xs text-green-400 mt-1">Rated {quickRating}/5 ⭐</p>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
     <AppLayout>
@@ -112,7 +250,7 @@ export default function AnimePage({ animes, genres, categories }: AnimeListProps
           <div>
             <Label className="text-sm text-gray-300">Genre</Label>
             <select
-              className="mt-1 w-full bg-gray-800 border border-gray-700 rounded px-3 py-2"
+              className="mt-1 w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-white"
               value={selectedGenre}
               onChange={(e) => setSelectedGenre(e.target.value)}
             >
@@ -127,7 +265,7 @@ export default function AnimePage({ animes, genres, categories }: AnimeListProps
           <div>
             <Label className="text-sm text-gray-300">Category</Label>
             <select
-              className="mt-1 w-full bg-gray-800 border border-gray-700 rounded px-3 py-2"
+              className="mt-1 w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-white"
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
             >
@@ -142,7 +280,7 @@ export default function AnimePage({ animes, genres, categories }: AnimeListProps
           <div>
             <Label className="text-sm text-gray-300">Sort By</Label>
             <select
-              className="mt-1 w-full bg-gray-800 border border-gray-700 rounded px-3 py-2"
+              className="mt-1 w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-white"
               value={sortOrder}
               onChange={(e) => setSortOrder(e.target.value)}
             >
@@ -177,30 +315,48 @@ export default function AnimePage({ animes, genres, categories }: AnimeListProps
           </p>
         </div>
 
-        {/* Anime Card Grid - Compact Version */}
+        {/* Anime Card Grid with Review/Rating Features */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {filteredAnime.map(anime => (
-            <Link
-              key={anime.id}
-              href={route('home.show', anime.id)}
-              className="bg-gray-800 rounded-lg overflow-hidden hover:shadow-xl hover:scale-105 transition-transform"
-            >
-              <img
-                src={anime.imageUrl || 'https://via.placeholder.com/200x280/444/fff?text=Anime'}
-                alt={anime.title}
-                className="w-full h-48 object-cover"
-              />
+            <div key={anime.id} className="bg-gray-800 rounded-lg overflow-hidden hover:shadow-xl hover:scale-105 transition-transform relative group">
+              <Link href={route('home.show', anime.id)}>
+                <img
+                  src={anime.imageUrl || 'https://via.placeholder.com/200x280/444/fff?text=Anime'}
+                  alt={anime.title}
+                  className="w-full h-48 object-cover"
+                />
+              </Link>
+              
               <div className="p-3">
-                <h3 className="text-sm font-semibold truncate">{anime.title}</h3>
+                <Link href={route('home.show', anime.id)}>
+                  <h3 className="text-sm font-semibold truncate hover:text-purple-400">{anime.title}</h3>
+                </Link>
+                
                 <div className="text-xs text-gray-400 flex justify-between mt-1">
                   <span className="truncate">{anime.studio}</span>
                   <span>{anime.release_date?.split('-')[0]}</span>
                 </div>
+                
                 {(anime as any).country && (
                   <div className="text-xs text-gray-500 mt-1">
                     📍 {(anime as any).country}
                   </div>
                 )}
+
+                {/* Rating Display */}
+                <div className="mt-2">
+                  <div className="flex items-center justify-between mb-2">
+                    <StarRating
+                      rating={anime.user_rating || 0}
+                      size="w-3 h-3"
+                      interactive={false}
+                    />
+                    <span className="text-xs text-gray-400">
+                      {anime.user_rating || 0}/5
+                    </span>
+                  </div>
+                </div>
+
                 <div className="flex justify-between items-center mt-3">
                   <div className="flex flex-wrap gap-1">
                     {anime.genres?.slice(0, 2).map(g => (
@@ -216,8 +372,22 @@ export default function AnimePage({ animes, genres, categories }: AnimeListProps
                     ★ {anime.review ? anime.review.rating_amount + anime.user_rating : anime.user_rating * 2}
                   </span>
                 </div>
+
+                {/* Review/Rating Action Buttons */}
+                <div className="mt-3 flex gap-2">
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      openReviewModal(anime);
+                    }}
+                    className="flex-1 text-xs bg-purple-600 hover:bg-purple-700 px-2 py-1 rounded transition-colors"
+                  >
+                    📝 Review
+                  </button>
+                  <QuickRating anime={anime} />
+                </div>
               </div>
-            </Link>
+            </div>
           ))}
         </div>
 
@@ -228,6 +398,105 @@ export default function AnimePage({ animes, genres, categories }: AnimeListProps
             <p className="text-gray-500 text-sm mt-2">
               Try adjusting your search or filters
             </p>
+          </div>
+        )}
+
+        {/* Review Modal */}
+        {showReviewModal && selectedAnime && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-gray-800 rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+              <div className="p-6">
+                {/* Modal Header */}
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <h2 className="text-xl font-bold text-white">Review Anime</h2>
+                    <p className="text-gray-400 text-sm">{selectedAnime.title}</p>
+                  </div>
+                  <button
+                    onClick={closeReviewModal}
+                    className="text-gray-400 hover:text-white text-2xl"
+                  >
+                    ×
+                  </button>
+                </div>
+
+                {/* Review Form */}
+                <form onSubmit={handleReviewSubmit} className="space-y-4">
+                  {/* Rating Section */}
+                  <div>
+                    <Label className="text-sm text-gray-300 mb-2 block">Your Rating</Label>
+                    <div className="flex items-center gap-3">
+                      <StarRating
+                        rating={reviewData.rating}
+                        onRatingChange={(rating) => setReviewData({ ...reviewData, rating })}
+                        onHover={setHoverRating}
+                        hoverRating={hoverRating}
+                        size="w-8 h-8"
+                      />
+                      <span className="text-sm text-gray-400">
+                        {hoverRating || reviewData.rating}/5
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Reviewer Name */}
+                  <div>
+                    <Label className="text-sm text-gray-300 mb-2 block">Your Name (Optional)</Label>
+                    <input
+                      type="text"
+                      placeholder="Enter your name"
+                      className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      value={reviewData.reviewerName}
+                      onChange={(e) => setReviewData({ ...reviewData, reviewerName: e.target.value })}
+                    />
+                  </div>
+
+                  {/* Review Text */}
+                  <div>
+                    <Label className="text-sm text-gray-300 mb-2 block">Your Review</Label>
+                    <textarea
+                      rows={4}
+                      placeholder="Write your review here..."
+                      className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-600 resize-none"
+                      value={reviewData.reviewText}
+                      onChange={(e) => setReviewData({ ...reviewData, reviewText: e.target.value })}
+                    />
+                  </div>
+
+                  {/* Recommendation */}
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="checkbox"
+                      id="recommend"
+                      checked={reviewData.isRecommended}
+                      onChange={(e) => setReviewData({ ...reviewData, isRecommended: e.target.checked })}
+                      className="accent-purple-600 w-4 h-4"
+                    />
+                    <label htmlFor="recommend" className="text-sm text-gray-300">
+                      I recommend this anime
+                    </label>
+                  </div>
+
+                  {/* Submit Buttons */}
+                  <div className="flex gap-3 pt-4">
+                    <button
+                      type="button"
+                      onClick={closeReviewModal}
+                      className="flex-1 px-4 py-2 border border-gray-600 text-gray-300 rounded hover:bg-gray-700 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={reviewData.rating === 0}
+                      className="flex-1 px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                      Submit Review
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
           </div>
         )}
 
@@ -250,7 +519,7 @@ export default function AnimePage({ animes, genres, categories }: AnimeListProps
                 </a>
                 <a href="#" className="bg-pink-500 hover:bg-pink-600 p-2 rounded transition-colors">
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.174-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.097.118.112.219.085.34-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.402.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.357-.629-2.756-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24.009 12.017 24.009c6.624 0 11.99-5.367 11.99-11.988C24.007 5.367 18.641.001.012.001z"/>
+                    <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.174-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.097.118.112.219.085.34-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.402.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.357-.629-2.756-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24.009 12.017 24.009c6.624 0 11.90-5.367 11.99-11.988C24.007 5.367 18.641.001.012.001z"/>
                   </svg>
                 </a>
                 <a href="#" className="bg-red-600 hover:bg-red-700 p-2 rounded transition-colors">
