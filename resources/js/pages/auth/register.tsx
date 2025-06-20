@@ -45,21 +45,28 @@ export default function Register({ status, canResetPassword, errors: propErrors 
     };
 
     return (
-        <AuthLayout title="Create an account" description="Enter your details below to create your account">
+        <AuthLayout title="Create an account" description="Enter your details below to create your AnimeRevu account">
             <Head title="Register" />
 
-            {status && <div className="mb-4 text-center text-sm font-medium text-green-600">{status}</div>}
+            {/* Status and Error Messages */}
+            {status && (
+                <div className="mb-4 text-center text-sm font-medium text-green-600">{status}</div>
+            )}
             {propErrors?.google && (
-                <div className="mb-4 text-center text-sm font-medium text-destructive">
+                <div className="mb-4 text-center text-sm font-medium text-red-500">
                     {propErrors.google}
                 </div>
             )}
 
+            {/* Registration Form */}
             <div className="flex flex-col gap-6">
                 <form className="flex flex-col gap-6" onSubmit={submit}>
                     <div className="grid gap-6">
+                        {/* Username */}
                         <div className="grid gap-2">
-                            <Label htmlFor="name">Username</Label>
+                            <Label htmlFor="name" className="text-white">
+                                Username
+                            </Label>
                             <Input
                                 id="name"
                                 type="text"
@@ -71,12 +78,16 @@ export default function Register({ status, canResetPassword, errors: propErrors 
                                 onChange={(e) => setData('name', e.target.value)}
                                 disabled={processing}
                                 placeholder="Username"
+                                className="bg-gray-800 text-white border-gray-700 focus:border-purple-500 focus:ring-purple-500"
                             />
-                            <InputError message={errors.name} className="mt-2" />
+                            <InputError message={errors.name} className="mt-2 text-red-500" />
                         </div>
 
+                        {/* Email */}
                         <div className="grid gap-2">
-                            <Label htmlFor="email">Email address</Label>
+                            <Label htmlFor="email" className="text-white">
+                                Email address
+                            </Label>
                             <Input
                                 id="email"
                                 type="email"
@@ -87,12 +98,16 @@ export default function Register({ status, canResetPassword, errors: propErrors 
                                 onChange={(e) => setData('email', e.target.value)}
                                 disabled={processing}
                                 placeholder="email@example.com"
+                                className="bg-gray-800 text-white border-gray-700 focus:border-purple-500 focus:ring-purple-500"
                             />
-                            <InputError message={errors.email} />
+                            <InputError message={errors.email} className="mt-2 text-red-500" />
                         </div>
 
+                        {/* Password */}
                         <div className="grid gap-2">
-                            <Label htmlFor="password">Password</Label>
+                            <Label htmlFor="password" className="text-white">
+                                Password
+                            </Label>
                             <Input
                                 id="password"
                                 type="password"
@@ -103,12 +118,16 @@ export default function Register({ status, canResetPassword, errors: propErrors 
                                 onChange={(e) => setData('password', e.target.value)}
                                 disabled={processing}
                                 placeholder="Password"
+                                className="bg-gray-800 text-white border-gray-700 focus:border-purple-500 focus:ring-purple-500"
                             />
-                            <InputError message={errors.password} />
+                            <InputError message={errors.password} className="mt-2 text-red-500" />
                         </div>
 
+                        {/* Confirm Password */}
                         <div className="grid gap-2">
-                            <Label htmlFor="password_confirmation">Confirm password</Label>
+                            <Label htmlFor="password_confirmation" className="text-white">
+                                Confirm password
+                            </Label>
                             <Input
                                 id="password_confirmation"
                                 type="password"
@@ -119,39 +138,46 @@ export default function Register({ status, canResetPassword, errors: propErrors 
                                 onChange={(e) => setData('password_confirmation', e.target.value)}
                                 disabled={processing}
                                 placeholder="Confirm password"
+                                className="bg-gray-800 text-white border-gray-700 focus:border-purple-500 focus:ring-purple-500"
                             />
-                            <InputError message={errors.password_confirmation} />
+                            <InputError message={errors.password_confirmation} className="mt-2 text-red-500" />
                         </div>
 
-                        <Button type="submit" className="mt-2 w-full" tabIndex={5} disabled={processing}>
-                            {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
+                        {/* Submit Button */}
+                        <Button
+                            type="submit"
+                            className={`mt-2 w-full bg-purple-500 text-white hover:bg-purple-600 transition duration-200 ease-in-out ${
+                                processing ? 'cursor-not-allowed opacity-50' : ''
+                            }`}
+                            tabIndex={5}
+                            disabled={processing}
+                        >
+                            {processing && <LoaderCircle className="h-4 w-4 animate-spin mr-2" />}
                             Create account
                         </Button>
                     </div>
                 </form>
 
-                <div className="relative">
+                {/* OR Divider */}
+                <div className="relative mt-6">
                     <div className="absolute inset-0 flex items-center">
-                        <span className="w-full border-t" />
+                        <span className="w-full border-t border-gray-700" />
                     </div>
-                    <div className="relative flex justify-center text-xs uppercase">
-                        <span className="bg-background px-2 text-muted-foreground">
-                            Or continue with
-                        </span>
+                    <div className="relative flex justify-center text-xs uppercase text-gray-400">
+                        <span className="bg-gray-900 px-2">OR CONTINUE WITH</span>
                     </div>
                 </div>
 
-                <GoogleButton 
-                    onClick={handleGoogleLogin} 
-                    className="mb-4"
-                />
-            </div>
+                {/* Google Login Button */}
+                <GoogleButton onClick={handleGoogleLogin} className="mt-4 w-full" />
 
-            <div className="text-muted-foreground text-center text-sm">
-                Already have an account?{' '}
-                <TextLink href={route('login')} tabIndex={6}>
-                    Log in
-                </TextLink>
+                {/* Footer Link */}
+                <div className="text-gray-400 text-center text-sm">
+                    Already have an account?{' '}
+                    <TextLink href={route('login')} tabIndex={6} className="text-purple-500 hover:text-purple-600 transition duration-200 ease-in-out">
+                       Log in
+                    </TextLink>
+                </div>
             </div>
         </AuthLayout>
     );

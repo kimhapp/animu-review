@@ -2,7 +2,7 @@ import { type SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
 
 export default function Welcome() {
-  const { auth } = usePage<SharedData>().props;
+  const { auth } = usePage<SharedData>().props; 
 
   return (
     <>
@@ -42,10 +42,11 @@ export default function Welcome() {
           <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
                 {auth.user ? (
                     <Link
-                        href={route('home')}
+                        href={route('home.index')}
                         className="w-40 rounded-md bg-[#581c87] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#4f1878] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#581c87]"
                     >
                         Home
+                        
                     </Link>
                 ) : (
                     <>
