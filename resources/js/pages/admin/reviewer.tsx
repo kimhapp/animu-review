@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
-import { ReviewerForm } from '@/components/reviewer-form';
-import { ReviewerFormData } from '@/types';
+import { ReviewerForm } from '@/components/admin/reviewer-form';
 import AdminLayout from '@/layouts/admin-layout'; 
 import { BreadcrumbItem } from '@/types';
 
@@ -14,46 +13,56 @@ const breadcrumbs: BreadcrumbItem[] = [
   { title: 'Reviewers', href: '/reviewers' },
 ];
 
+type ReviewerFormData = {
+  name: string;
+  email: string;
+  role: string;
+};
+
 export default function ReviewersIndex() {
   const [showForm, setShowForm] = useState(false);
   const [reviewers, setReviewers] = useState<ReviewerFormData[]>([]);
   const initialData = { name: '', email: '', role: '' };
-  const [formData, setFormData] = useState(initialData);
+  const [formData, setFormData] = useState<ReviewerFormData>(initialData);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
   const handleChange = (field: keyof ReviewerFormData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
- const handleSubmit = (e: React.FormEvent) => {
-  e.preventDefault();
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (editingIndex !== null) {
+      // ✏️ Editing existing reviewer - only role can be changed
+      const updatedList = [...reviewers];
+      updatedList[editingIndex] = { ...updatedList[editingIndex], role: formData.role };
+      setReviewers(updatedList);
+      setEditingIndex(null);
+    } else {
+      // ➕ Adding new reviewer
+      setReviewers((prev) => [...prev, formData]);
+    }
 
-  if (editingIndex !== null) {
-    // ✏️ Editing existing reviewer
-    const updatedList = [...reviewers];
-    updatedList[editingIndex] = formData;
-    setReviewers(updatedList);
-    setEditingIndex(null);
-  } else {
-    // ➕ Adding new reviewer
-    setReviewers((prev) => [...prev, formData]);
-  }
+    // Reset form
+    setFormData(initialData);
+    setShowForm(false);
+  };
 
-  // Reset form
-  setFormData(initialData);
-  setShowForm(false);
-};
   const handleEdit = (index: number) => {
-  const reviewerToEdit = reviewers[index];
-  setFormData(reviewerToEdit);
-  setEditingIndex(index);
-  setShowForm(true);
-};
+    const reviewerToEdit = reviewers[index];
+    setFormData(reviewerToEdit);
+    setEditingIndex(index);
+    setShowForm(true);
+  };
 
   const handleDelete = (index: number) => {
     if (window.confirm('Are you sure you want to delete this reviewer?')) {
       setReviewers(reviewers.filter((_, i) => i !== index));
     }
+  };
+
+  const getRoleLabel = (role: string) => {
+    return role === 'admin' ? 'Admin' : role === 'reviewer' ? 'Reviewer' : role;
   };
 
   return (
@@ -70,13 +79,14 @@ export default function ReviewersIndex() {
         {showForm && (
           <Card>
             <CardHeader>
-              <CardTitle>Add New Reviewer</CardTitle>
+            <CardTitle>{editingIndex !== null ? 'Edit Reviewer Role' : 'Add New Reviewer'}</CardTitle>
             </CardHeader>
             <CardContent>
               <ReviewerForm
                 data={formData}
                 onChange={handleChange}
                 onSubmit={handleSubmit}
+                isEditing={editingIndex !== null}
               />
             </CardContent>
           </Card>
@@ -90,26 +100,40 @@ export default function ReviewersIndex() {
             {reviewers.length === 0 ? (
               <p className="text-muted-foreground">No reviewers found.</p>
             ) : (
-              <ul className="space-y-4">
+              <div className="grid gap-4">
                 {reviewers.map((reviewer, index) => (
-                   <li key={index} className="border-b pb-4 mb-4 flex justify-between items-start">
-          <div>
-            <p><strong>Name:</strong> {reviewer.name}</p>
-            <p><strong>Email:</strong> {reviewer.email}</p>
-            <p><strong>Role:</strong> {reviewer.role}</p>
-          </div>
-
-          <div className="flex space-x-2">
-            <Button variant="outline" size="sm" onClick={() => handleEdit(index)}>
-              Edit
-            </Button>
-            <Button variant="destructive" size="sm" onClick={() => handleDelete(index)}>
-              Delete
-            </Button>
-          </div>
-        </li>
+                  <div key={index} className="border rounded-lg p-4 bg-white shadow-sm">Add commentMore actions
+                    <div className="flex justify-between items-start">
+                      <div className="space-y-2 flex-1">
+                        <div className="flex items-center space-x-2">
+                          <h3 className="text-lg font-semibold text-gray-900">{reviewer.name}</h3>
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            reviewer.role === 'admin' 
+                              ? 'bg-red-100 text-red-800' 
+                              : 'bg-blue-100 text-blue-800'
+                          }`}>
+                            {getRoleLabel(reviewer.role)}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-600">
+                          <span className="font-medium">Email:</span> {reviewer.email}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          <span className="font-medium">Role:</span> {getRoleLabel(reviewer.role)}
+                        </p>
+                      </div>
+                      <div className="flex space-x-2 ml-4">
+                        <Button variant="outline" size="sm" onClick={() => handleEdit(index)}>
+                          Edit Role
+                        </Button>
+                        <Button variant="destructive" size="sm" onClick={() => handleDelete(index)}>
+                          Delete
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
                 ))}
-              </ul>
+              </div>
             )}
           </CardContent>
         </Card>

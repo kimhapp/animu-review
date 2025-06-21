@@ -1,107 +1,123 @@
 import { LucideIcon } from 'lucide-react';
 import type { Config } from 'ziggy-js';
 
-export interface Auth {
-    user: User;
+// User & Auth
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+  imageUrl?: string;
+  email_verified_at: string | null;
+  created_at: string;
+  updated_at: string;
+  bio?: string;
+  follower_count: number;
+  [key: string]: unknown;
 }
 
-export interface BreadcrumbItem {
-    title: string;
-    href: string;
+export interface Auth {
+  user: User;
+}
+
+// Navigation
+export interface NavItem {
+  title: string;
+  href: string;
+  icon?: LucideIcon | null;
+  isActive?: boolean;
 }
 
 export interface NavGroup {
-    title: string;
-    items: NavItem[];
+  title: string;
+  items: NavItem[];
 }
 
-export interface NavItem {
-    title: string;
-    href: string;
-    icon?: LucideIcon | null;
-    isActive?: boolean;
+export interface BreadcrumbItem {
+  title: string;
+  href: string;
 }
 
+// Shared Layout Data
 export interface SharedData {
-    name: string;
-    quote: { message: string; author: string };
-    auth: Auth;
-    ziggy: Config & { location: string };
-    sidebarOpen: boolean;
-    [key: string]: unknown;
+  name: string;
+  quote: { message: string; author: string };
+  auth: Auth;
+  ziggy: Config & { location: string };
+  sidebarOpen: boolean;
+  [key: string]: unknown;
 }
 
-export interface User {
-    id: number;
-    name: string;
-    email: string;
-    imageUrl?: string;
-    email_verified_at: string | null;
-    created_at: string;
-    updated_at: string;
-    bio?: string;
-    follower_count: number;
-    [key: string]: unknown; // This allows for additional properties...
-}
-
+// Anime Domain
 export interface Anime {
-    id: number;
-    title: string;
-    nativeTitle: string;
-    studio: string;
-    year: number;
-    imageUrl: string;
-    description: string;
-    favorite_count: number;
-    user_rating: number;
-    release_date: string;
-    review?: Review | null;
-    genres: Genre[];
-    category: Category;
-}
-
-export interface AnimeListProps {
-    animes: Anime[];
-    genres: Genre[];
-    categories: Category[];
+  id: number;
+  title: string;
+  native_title: string;
+  studio: string;
+  released_date: number;
+  imageUrl: string;
+  description: string;
+  favorite_count: number;
+  user_rating: number;
+  release_date: string;
+  review?: Review | null;
+  genres: Genre[];
+  category: Category;
 }
 
 export type Genre = {
-    id: number;
-    name: string;
-    description?: string | null;
+  id: number;
+  name: string;
+  description?: string | null;
 };
 
 export type Category = {
-    id: number;
-    name: string;
-    description?: string | null;
+  id: number;
+  name: string;
+  description?: string | null;
 };
 
-export type Review = { rating_amount: number };
-
-type Paginated<T> = {
-    data: T[];
-    current_page: number;
-    last_page: number;
-    next_page_url: string | null;
-};
-
-export interface ProfilePageProps {
-    user: User;
-    favoriteAnime: Paginated<Anime>;
-    reviewedAnime: Paginated<ReviewWithAnime>;
-  }
-
-export interface ReviewWithAnime {
-    id: number;
-    anime: Anime;
-    rating: number;
-    // other review fields if any
+// Review Domain
+export interface Review {
+  rating_amount: number;
 }
 
-export type ReviewerFormData = {
-    name: string;
-    email: string;
-    role: string;
+export interface ReviewWithAnime {
+  id: number;
+  anime: Anime;
+  rating: number;
+}
+
+// Pagination Utility
+export type Paginated<T> = {
+  data: T[];
+  current_page: number;
+  last_page: number;
+  next_page_url: string | null;
 };
+
+// Profile Page Props
+export interface ProfilePageProps {
+  user: User;
+  favoriteAnime: Paginated<Anime>;
+  reviewedAnime: Paginated<ReviewWithAnime>;
+  ratingAnime: PaginatedResponse<Anime>;
+}
+
+// Review Form Props
+export type ReviewFormProps = {
+  animeList: { id: number; title: string; imageUrl: string }[];
+  onSave: (data: { anime_id: number; rating: number; reviewText: string }) => void;
+  onCancel: () => void;
+  initialReview?: {
+    anime_id: number;
+    rating: number;
+    content: string;
+    anime: { id: number; title: string; imageUrl: string };
+  };
+};
+
+export type Country = {
+  id: number;
+  name: string;
+};
+

@@ -69,13 +69,4 @@ class PrivilegeUserController extends Controller
         return redirect()->route('admin.privilege.index')
             ->with('success', 'User role updated and promotion accepted.');
     }
-
-    // Optionally reject promotion
-    public function reject(PendingPromotion $pendingPromotion): RedirectResponse
-    {
-        $pendingPromotion->delete();
-
-        return redirect()->route('admin.privilege.index')
-            ->with('success', 'Pending promotion rejected.');
-    }
 }

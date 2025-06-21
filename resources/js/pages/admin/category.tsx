@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
-import { CategoryForm } from '@/components/category-form';
+import { CategoryForm } from '@/components/admin/category-form';
 import AdminLayout from '@/layouts/admin-layout';
 import { BreadcrumbItem } from '@/types';
+import { router, usePage } from '@inertiajs/react';
 
 // 🔁 Define breadcrumbs
 const breadcrumbs: BreadcrumbItem[] = [
@@ -13,14 +14,20 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 type CategoryFormData = {
+  id: number;
   name: string;
   description?: string;
 };
 
+type PageProps = {
+  categories: CategoryFormData[];
+};
+
 export default function CategoriesIndex() {
   const [showForm, setShowForm] = useState(false);
-  const [categories, setCategories] = useState<CategoryFormData[]>([]);
-  const initialData = { name: '', description: '' };
+  const { categories } = usePage<PageProps>().props;
+  const [categoryList, setCategoryList] = useState<CategoryFormData[]>(categories);
+  const initialData: CategoryFormData = { id: 0, name: '', description: '' };
   const [formData, setFormData] = useState<CategoryFormData>(initialData);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
@@ -30,35 +37,49 @@ export default function CategoriesIndex() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
+  
     if (editingIndex !== null) {
-      // ✏️ Editing existing category
-      const updatedList = [...categories];
-      updatedList[editingIndex] = formData;
-      setCategories(updatedList);
-      setEditingIndex(null);
-    } else {
-      // ➕ Adding new category
-      setCategories((prev) => [...prev, formData]);
+      const id = categoryList[editingIndex]?.id;
+    
+      if (!id) return; // failsafe in case the category is missing
+    
+      router.put(route('admin.category.update', { category: id }), formData, {
+        onSuccess: () => {
+          router.visit(route('admin.category'));
+        }
+      });
     }
-
-    // Reset form
-    setFormData(initialData);
-    setShowForm(false);
+     else {
+      // Send POST request to create
+      router.post(route('admin.category.store'), formData, {
+        onSuccess: () => {
+          router.visit(route('admin.category'));
+        },
+      });
+    }
   };
 
   const handleEdit = (index: number) => {
-    const categoryToEdit = categories[index];
+    const categoryToEdit = categoryList[index];
     setFormData(categoryToEdit);
     setEditingIndex(index);
     setShowForm(true);
   };
 
   const handleDelete = (index: number) => {
+    const category = categoryList[index];
+  
+    if (!category) return;
+  
     if (window.confirm('Are you sure you want to delete this category?')) {
-      setCategories(categories.filter((_, i) => i !== index));
+      router.delete(route('admin.category.destroy', category.id), {
+        onSuccess: () => {
+          setCategoryList((prev) => prev.filter((_, i) => i !== index));
+        },
+      });
     }
   };
+  
 
   return (
     <AdminLayout breadcrumbs={breadcrumbs}>
@@ -93,11 +114,11 @@ export default function CategoriesIndex() {
             <CardTitle>Category List</CardTitle>
           </CardHeader>
           <CardContent>
-            {categories.length === 0 ? (
-              <p className="text-muted-foreground">No categories found.</p>
-            ) : (
-              <ul className="space-y-4">
-                {categories.map((category, index) => (
+          {categoryList.length === 0 ? (
+            <p className="text-muted-foreground">No categories found.</p>
+          ) : (
+            <ul className="space-y-4">
+              {categoryList.map((category, index) => (
                   <li key={index} className="border-b pb-4 mb-4 flex justify-between items-start">
                     <div>
                       <p><strong>Name:</strong> {category.name}</p>

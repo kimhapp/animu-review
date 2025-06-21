@@ -13,7 +13,7 @@ class CategoryController extends Controller
     // Show all categories (and a form to create new)
     public function create()
     {
-        return Inertia::render('admin/category', [
+        return Inertia::render('admin/category', props: [
             'categories' => Category::all(),
         ]);
     }
@@ -30,7 +30,7 @@ class CategoryController extends Controller
     // Show edit form for a category
     public function edit(Category $category)
     {
-        return Inertia::render('admin/category-edit', [
+        return Inertia::render('admin/category', [
             'category' => $category,
         ]);
     }
@@ -40,7 +40,7 @@ class CategoryController extends Controller
     {
         $category->update($request->validated());
 
-        return redirect()->route('admin.category.index')
+        return redirect()->route('admin.category')
             ->with('success', 'Category updated successfully.');
     }
 
@@ -49,7 +49,7 @@ class CategoryController extends Controller
     {
         $category->delete();
 
-        return redirect()->route('admin.category.index')
+        return redirect()->route('admin.category')
             ->with('success', 'Category deleted successfully.');
     }
 }

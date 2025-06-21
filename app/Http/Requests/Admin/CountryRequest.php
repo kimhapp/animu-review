@@ -11,7 +11,7 @@ class CountryRequest extends FormRequest
     public function authorize(): bool
     {
         // Adjust this as needed — e.g., only admin users can manage countries
-        return Auth::check() && Auth::user()->role === 'admin';
+        return Auth::check();
     }
 
     public function rules(): array

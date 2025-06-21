@@ -40,7 +40,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
         <>
             <div
               className={cn(
-                "sticky top-0 z-50 border-sidebar-border/80 border-b bg-[#1c1c2e] shadow-md transition-transform duration-300",
+                "sticky top-0 z-50 border-sidebar-border/80 border-b bg-[color:var(--sidebar)] shadow-md transition-transform duration-300",
                 showHeader ? "translate-y-0" : "-translate-y-full"
               )}
             >

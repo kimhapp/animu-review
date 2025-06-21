@@ -9,8 +9,7 @@ class PrivilegeUserRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        // Only admins are allowed to initiate promotions
-        return Auth::check() && Auth::user()->role === 'admin';
+        return Auth::check();
     }
 
     public function rules(): array

@@ -23,9 +23,15 @@ class Anime extends Model
         'studio',
         'favorite_count',
         'view_count',
-        'type_id',
+        'category_id',
         'imageUrl',
     ];
+
+    protected $casts = [
+        'user_rating' => 'float',
+        'is_finished' => 'bool'
+    ];
+    
 
     /**
      * Genres associated with this anime (many-to-many).

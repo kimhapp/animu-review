@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Reviewer;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -16,7 +16,7 @@ class ReviewRequest extends FormRequest
         }
 
         // Otherwise (creating), just check auth
-        return Auth::check() && (Auth::user()->role === 'reviewer' || Auth::user() === 'admin');
+        return Auth::check();
     }
 
     public function rules(): array
