@@ -13,20 +13,24 @@ class ShowAnimeController extends Controller
     public function create($id)
     {
         $anime = Anime::with(['genres', 'category', 'review'])->findOrFail($id);
+        
 
         // Fetch similar anime by genre (you can adjust this logic)
         $genreIds = $anime->genres->pluck('id');
+
+        $latestAnime = Anime::latest('release_date')
+            ->get();
 
         $similarAnime = Anime::with(['genres'])
             ->where('id', '!=', $anime->id)
             ->whereHas('genres', fn($query) =>
                 $query->whereIn('genres.id', $genreIds)
             )
-            ->take(6)
             ->get();
 
         return Inertia::render('home/show', [
             'similarAnime' => $similarAnime,
+            'latestAnime' => $latestAnime,
             'selectedAnime' => $anime,
         ]);
     }

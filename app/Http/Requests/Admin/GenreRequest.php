@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class GenreRequest extends FormRequest
 {
@@ -24,7 +25,7 @@ class GenreRequest extends FormRequest
         $genreId = $this->route('genre')?->id;
 
         return [
-            'name' => ['required', 'string', 'unique:genres,name,' . $genreId],
+            'name' => ['required', 'string', Rule::unique('genres', 'name')->ignore($genreId)],
             'description' => ['nullable', 'string'],
         ];
     }

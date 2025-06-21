@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Profile;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ProfileUpdateRequest;
+use App\Http\Requests\Profile\ProfileUpdateRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,30 +11,51 @@ use Inertia\Inertia;
 
 class EditProfileController extends Controller
 {
-    //
-    public function edit(Request $request) {
-        return Inertia::render('profile/edit');
+    // Show edit form with user data
+    public function edit(Request $request)
+    {
+        $user = $request->user();
+
+        return Inertia::render('profile/edit', [
+            'user' => [
+                'username' => $user->username,
+                'bio' => $user->bio,
+                'email' => $user->email,
+                'imageUrl' => $user->imageUrl,
+                'bannerUrl' => $user->bannerUrl,
+            ],
+        ]);
     }
-    
-    /**
-     * Update the user's profile settings.
-     */
+
+    // Update user profile
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $user = $request->user();
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        $data = $request->validated();
+
+        // Update password only if filled
+        if ($request->filled('password')) {
+            $data['password'] = bcrypt($request->password);
+        } else {
+            unset($data['password']);
         }
 
-        $request->user()->save();
+        // Here, since you use imageUrl, assume client sends full URLs or strings
+        if ($request->filled('imageUrl')) {
+            $data['imageUrl'] = $request->imageUrl;
+        }
 
-        return redirect()->intended(route('profile/index', absolute: false));
+        if ($request->filled('bannerUrl')) {
+            $data['bannerUrl'] = $request->bannerUrl;
+        }
+
+        $user->update($data);
+
+        return redirect()->route('profile');
     }
 
-    /**
-     * Delete the user's account.
-     */
+    // Delete user account
     public function destroy(Request $request): RedirectResponse
     {
         $request->validate([
@@ -52,5 +73,4 @@ class EditProfileController extends Controller
 
         return redirect('/');
     }
-    
 }

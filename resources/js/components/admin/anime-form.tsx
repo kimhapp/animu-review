@@ -1,45 +1,58 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ReactSelect from 'react-select';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 
+type AnimeFormData = {
+  title: string;
+  native_title: string;
+  country: number;          // country ID
+  description: string;
+  release_date: string;     // ISO date string, e.g. '2024-06-21'
+  duration?: number;        // optional number of minutes
+  total_episodes?: number;  // optional number
+  is_finished?: boolean;
+  director: string;
+  studio: string;
+  category_id: number;      // category ID
+  imageUrl?: string;        // optional image URL
+  genre_ids: number[];      // array of genre IDs (required, min 1)
+}
+
 type GenreOption = { id: number; name: string };
 type CategoryOption = { id: number; name: string };
+type CountryOption = { id: number; name: string };
 
 type Props = {
-  data: {
-    title: string;
-    native_title: string;
-    country : string;
-    description: string;
-    type: string;
-    release_date: string;
-    director: string;
-    studio: string;
-    episodes: number;
-    genre_ids: number[];
-    category_id: number;
-    cover?: string;
-    coverFile?: File;
-  };
+  data: AnimeFormData
   genres: GenreOption[];
   categories: CategoryOption[];
-  onChange: (field: string, value: any) => void;
+  countries: CountryOption[];
+  onChange: (field: keyof AnimeFormData | 'coverFile' | 'imageUrl', value: any) => void;
   onSubmit: (e: React.FormEvent) => void;
+  errors?: Record<string, string>;
 };
 
-export function AnimeForm({ data, genres, categories, onChange, onSubmit }: Props) {
+export function AnimeForm({ data, genres, categories, countries, onChange, onSubmit, errors }: Props) {
+  useEffect(() => {
+    if (errors && Object.keys(errors).length > 0) {
+      console.error('Validation failed', errors);
+    }
+  }, [errors]);
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
       const file = e.target.files[0];
       const reader = new FileReader();
 
-      reader.onload = (event) => {
-        onChange('cover', event.target?.result as string);
-        onChange('coverFile', file);
-      };
-
+    reader.onload = (event) => {
+      // Only use this for preview
+      const previewUrl = event.target?.result as string;
+      onChange('coverFile', file);           // store the file for preview or later upload
+      onChange('imageUrl', '');              // clear the imageUrl (or keep the old one)
+    };
+    
       reader.readAsDataURL(file);
     }
   };
@@ -65,14 +78,23 @@ export function AnimeForm({ data, genres, categories, onChange, onSubmit }: Prop
           onChange={(e) => onChange('native_title', e.target.value)}
         />
       </div>
-      {/* country */}
+
+      {/* Country Dropdown */}
       <div className="space-y-2">
         <label htmlFor="country">Country</label>
-        <Input
+        <select
           id="country"
           value={data.country}
-          onChange={(e) => onChange('country', e.target.value)}
-        />
+          onChange={(e) => onChange('country', Number(e.target.value))}
+          className="w-full border rounded-md px-3 py-2"
+        >
+          <option value="">Select a country</option>
+          {countries.map((country) => (
+            <option key={country.id} value={country.id}>
+              {country.name}
+            </option>
+          ))}
+        </select>
       </div>
 
       {/* Description */}
@@ -85,38 +107,22 @@ export function AnimeForm({ data, genres, categories, onChange, onSubmit }: Prop
         />
       </div>
 
-      {/* Type */}
+      {/* Better Genre Multi-Select */}
       <div className="space-y-2">
-        <label>Type</label>
-        <select
-          value={data.type}
-          onChange={(e) => onChange('type', e.target.value)}
-          className="w-full border rounded-md px-3 py-2"
-        >
-          <option value="">Select Type</option>
-          <option value="TV Series">TV Series</option>
-          <option value="Movie">Movie</option>
-          <option value="OVA">OVA</option>
-          <option value="Special">Special</option>
-        </select>
+        <label htmlFor="genres">Genres</label>
+        <ReactSelect
+          options={genres}
+          isMulti
+          getOptionLabel={(genre) => genre.name}
+          getOptionValue={(genre) => genre.id.toString()}
+          value={genres.filter((genre) => (data.genre_ids || []).includes(genre.id))}
+          onChange={(selected) => {
+            const ids = Array.isArray(selected) ? selected.map((g) => g.id) : [];
+            onChange('genre_ids', ids);
+          }}
+          className="text-sm"
+        />
       </div>
-
- {/* Better Genre Multi-Select */}
-<div className="space-y-2">
-  <label htmlFor="genres">Genres</label>
-  <ReactSelect
-    options={genres}
-    isMulti
-    getOptionLabel={(genre) => genre.name}
-    getOptionValue={(genre) => genre.id.toString()}
-    value={genres.filter((g) => data.genre_ids.includes(g.id))}
-    onChange={(selected) => {
-      const ids = selected ? selected.map((g) => g.id) : [];
-      onChange('genre_ids', ids);
-    }}
-    className="text-sm"
-  />
-</div>
 
       {/* Category Dropdown */}
       <div className="space-y-2">
@@ -169,36 +175,41 @@ export function AnimeForm({ data, genres, categories, onChange, onSubmit }: Prop
         <Input
           type="number"
           min="0"
-          value={data.episodes || ''}
-          onChange={(e) => onChange('episodes', parseInt(e.target.value) || 0)}
+          value={data.total_episodes?.toString() || ''}
+          onChange={(e) => onChange('total_episodes', parseInt(e.target.value) || 0)}
         />
       </div>
 
-      {/* Cover Upload */}
       <div className="space-y-2">
-        <label>Cover Image</label>
-        <div className="flex items-center gap-2">
-          <input
-            type="file"
-            id="cover-upload"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="hidden"
-          />
-          <label
-            htmlFor="cover-upload"
-            className="cursor-pointer bg-primary text-white px-4 py-2 rounded-md text-sm hover:bg-primary/90"
-          >
-            Choose Image
-          </label>
-          <span className="text-sm text-muted-foreground truncate max-w-xs">
-            {data.coverFile?.name || 'No file chosen'}
-          </span>
-        </div>
-        {data.cover && (
+        <label htmlFor="is_finished">Finished?</label>
+        <input
+          type="checkbox"
+          id="is_finished"
+          checked={!!data.is_finished}
+          onChange={(e) => onChange('is_finished', e.target.checked)}
+        />
+      </div>
+
+      {/* Cover Image URL */}
+      <div className="space-y-2">
+        <label htmlFor="coverFile">Cover Image</label>
+        <input
+          type="file"
+          accept="image/*"
+          id="coverFile"
+          onChange={handleImageChange}
+          className="block w-full text-sm text-gray-500
+            file:mr-4 file:py-2 file:px-4
+            file:rounded file:border-0
+            file:text-sm file:font-semibold
+            file:bg-blue-50 file:text-blue-700
+            hover:file:bg-blue-100
+          "
+        />
+        {data.imageUrl && (
           <img
-            src={data.cover}
-            alt="Preview"
+            src={data.imageUrl}
+            alt="Cover Preview"
             className="mt-2 w-32 h-auto rounded border"
           />
         )}
