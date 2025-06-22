@@ -16,7 +16,7 @@ class CountryRequest extends FormRequest
 
     public function rules(): array
     {
-        $countryId = $this->route('country')->id;
+        $countryId = $this->route('country')?->id;
 
         return [
             'name' => ['required', 'string', 'max:255', Rule::unique('countries', 'name')->ignore($countryId)],

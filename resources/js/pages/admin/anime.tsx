@@ -10,7 +10,7 @@ import { Plus, Edit, Trash2 } from 'lucide-react';
 import AdminLayout from '@/layouts/admin-layout';
 import { AnimeForm } from '@/components/admin/anime-form';
 import { usePage, router } from '@inertiajs/react';
-import { generateAnimeCoverPath, uploadFile } from '@/lib/storage';
+import { deleteFile, generateAnimeCoverPath, isFirebaseStorageUrl, uploadFile } from '@/lib/storage';
 import { BreadcrumbItem } from '@/types';
 
 // Breadcrumbs
@@ -123,8 +123,6 @@ export default function AnimesIndex() {
       genre_ids: formData.genre_ids || [],
     };
 
-    console.log('Submitting:', submitData);
-
     if (editingId !== null) {
       // Update existing anime via PUT
       router.put(route('admin.anime.update', { anime: editingId }), submitData, {
@@ -156,7 +154,6 @@ export default function AnimesIndex() {
   const handleEdit = (id: number) => {
     const animeToEdit = animeList.find((anime) => anime.id === id);
     if (!animeToEdit) return; // fallback if not found
-    console.log('Editing anime genre_ids:', animeToEdit.genre_ids);
     setFormData(animeToEdit);
     setEditingId(id);
     setShowForm(true);
@@ -169,8 +166,7 @@ export default function AnimesIndex() {
     if (window.confirm('Are you sure you want to delete this anime?')) {
       router.delete(route('admin.anime.destroy', anime.id), {
         onSuccess: () => {
-          // Remove the deleted anime from local state by matching ID
-          setAnimeList((prev) => prev.filter((anime) => anime.id !== id));
+          router.visit(route('admin.anime'));
         },
       });
     }

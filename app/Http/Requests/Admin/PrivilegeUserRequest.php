@@ -16,7 +16,7 @@ class PrivilegeUserRequest extends FormRequest
     {
         return [
             'user_id' => ['required', 'exists:users,id'],
-            'new_role' => ['required', 'string', 'in:user,admin,moderator'], // Customize as needed
+            'new_role' => ['required', 'string', 'in:admin,reviewer'], // Customize as needed
         ];
     }
 }

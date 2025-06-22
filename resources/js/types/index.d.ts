@@ -51,17 +51,17 @@ export interface SharedData {
 export interface Anime {
   id: number;
   title: string;
-  native_title: string;
   studio: string;
-  released_date: number;
-  imageUrl: string;
-  description: string;
-  favorite_count: number;
-  user_rating: number;
   release_date: string;
-  review?: Review | null;
-  genres: Genre[];
-  category: Category;
+  user_rating: number;
+  favorite_count: number;
+  imageUrl: string;
+  genres?: Genre[];
+  category?: Category;
+  review?: {
+    rating_amount: number;
+  } | null;
+  country?: Country;
 }
 
 export type Genre = {
@@ -74,6 +74,11 @@ export type Category = {
   id: number;
   name: string;
   description?: string | null;
+};
+
+export type Country = {
+  id: number;
+  name: string;
 };
 
 // Review Domain
@@ -114,10 +119,5 @@ export type ReviewFormProps = {
     content: string;
     anime: { id: number; title: string; imageUrl: string };
   };
-};
-
-export type Country = {
-  id: number;
-  name: string;
 };
 

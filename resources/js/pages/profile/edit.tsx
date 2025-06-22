@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Head, router, useForm, usePage } from '@inertiajs/react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { route } from 'ziggy-js';
+import { deleteFile, generateAvatarPath, generateBannerPath, isFirebaseStorageUrl, uploadFile } from '@/lib/storage';
 
 interface User {
+  id: number;
   name: string;
   bio: string;
   email: string;
@@ -22,12 +24,26 @@ export default function EditProfile() {
   const { props } = usePage<Props>();
   const user = props.user;
 
+  useEffect(() => {
+    setData({
+      name: user.name || '',
+      bio: user.bio || '',
+      imageUrl: user.imageUrl || '',
+      bannerUrl: user.bannerUrl || '',
+    }); 
+
+    if (user.imageUrl && typeof user.imageUrl === 'string') {
+      setAvatarUrl(user.imageUrl);
+    } 
+
+    if (user.bannerUrl && typeof user.bannerUrl === 'string') {
+      setBannerUrl(user.bannerUrl);
+    }
+  }, [user]);
+
   const { data, setData, post, processing, errors } = useForm({
     name: user.name || '',
     bio: user.bio || '',
-    email: user.email || '',
-    password: '',
-    password_confirmation: '',
     imageUrl: user.imageUrl || '',
     bannerUrl: user.bannerUrl || '',
   });
@@ -37,13 +53,66 @@ export default function EditProfile() {
     setData(e.target.name as any, e.target.value);
   };
 
-  // Handle image upload: here just URL input or drag & drop; adjust if you want actual file upload
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const file = e.target.files[0];
-      const url = URL.createObjectURL(file);
-      setData(e.target.name as any, url);
-      // If you want to upload file, you'd need a separate upload logic here
+  const initialAvatar = typeof user.imageUrl === "string" ? user.imageUrl : "";
+  const [avatarUrl, setAvatarUrl] = useState<string>(initialAvatar);
+  const initialBanner = typeof user.bannerUrl === "string" ? user.bannerUrl : "";
+  const [bannerUrl, setBannerUrl] = useState<string>(initialBanner);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [uploadProgressAvatar, setUploadProgressAvatar] = useState(0);
+  const [uploadingBanner, setUploadingBanner] = useState(false);
+  const [uploadProgressBanner, setUploadProgressBanner] = useState(0);
+
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;  
+    // Show local preview immediately
+    const localUrl = URL.createObjectURL(file);
+    setAvatarUrl(localUrl); 
+    setUploadingAvatar(true);
+    setUploadProgressAvatar(0); 
+    try {
+      if (avatarUrl && isFirebaseStorageUrl(avatarUrl)) {
+        await deleteFile(avatarUrl);
+      } 
+      const path = generateAvatarPath(file, user.id);
+      const url = await uploadFile(file, path, setUploadProgressAvatar);  
+      // Replace local preview with uploaded URL
+      setAvatarUrl(url);
+      setData('imageUrl', url);  // sync to form data for submission
+    } catch (error) {
+      alert("Failed to upload avatar.");
+      console.error(error);
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
+
+  // Handle banner file upload
+  const handleBannerChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;  
+
+    const localUrl = URL.createObjectURL(file);
+    setBannerUrl(localUrl); 
+
+    setUploadingBanner(true);
+    setUploadProgressBanner(0); 
+
+    try {
+      if (bannerUrl && isFirebaseStorageUrl(bannerUrl)) {
+        await deleteFile(bannerUrl);
+      } 
+
+      const path = generateBannerPath(file, user.id);
+      const url = await uploadFile(file, path, setUploadProgressBanner);  
+
+      setBannerUrl(url);
+      setData('bannerUrl', url);
+    } catch (error) {
+      alert("Failed to upload banner.");
+      console.error(error);
+    } finally {
+      setUploadingBanner(false);
     }
   };
 
@@ -77,7 +146,7 @@ export default function EditProfile() {
           type="file"
           name="bannerUrl"
           accept="image/*"
-          onChange={handleImageChange}
+          onChange={handleBannerChange}
           className="hidden"
         />
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 bg-black/40 px-3 py-1 rounded-md text-sm font-semibold">
@@ -110,7 +179,7 @@ export default function EditProfile() {
               type="file"
               name="imageUrl"
               accept="image/*"
-              onChange={handleImageChange}
+              onChange={handleAvatarChange}
               className="hidden"
             />
             <div className="absolute bottom-0 w-full text-center text-sm bg-black/60 text-white py-1 select-none">
@@ -134,6 +203,7 @@ export default function EditProfile() {
               autoComplete="name"
             />
           </div>
+          {errors.name && <p className="text-red-500">{errors.name}</p>}
 
           {/* Bio */}
           <div className="flex flex-col md:flex-row md:items-start gap-3">
@@ -146,51 +216,6 @@ export default function EditProfile() {
               placeholder="Tell us about yourself"
               className="flex-1 bg-[#3a3572] border border-purple-500 rounded-md px-4 py-3 resize-none focus:outline-none"
               rows={4}
-            />
-          </div>
-
-          {/* Email */}
-          <div className="flex flex-col md:flex-row md:items-center gap-3">
-            <Label htmlFor="email" className="w-40 text-lg font-semibold">Email</Label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              value={data.email}
-              onChange={handleChange}
-              placeholder="Email"
-              className="flex-1 bg-[#3a3572] border border-purple-500"
-              autoComplete="email"
-            />
-          </div>
-
-          {/* New Password */}
-          <div className="flex flex-col md:flex-row md:items-center gap-3">
-            <Label htmlFor="password" className="w-40 text-lg font-semibold">New Password</Label>
-            <Input
-              id="password"
-              name="password"
-              type="password"
-              value={data.password}
-              onChange={handleChange}
-              placeholder="New Password"
-              className="flex-1 bg-[#3a3572] border border-purple-500"
-              autoComplete="new-password"
-            />
-          </div>
-
-          {/* Confirm Password */}
-          <div className="flex flex-col md:flex-row md:items-center gap-3">
-            <Label htmlFor="password_confirmation" className="w-40 text-lg font-semibold">Confirm Password</Label>
-            <Input
-              id="password_confirmation"
-              name="password_confirmation"
-              type="password"
-              value={data.password_confirmation}
-              onChange={handleChange}
-              placeholder="Confirm Password"
-              className="flex-1 bg-[#3a3572] border border-purple-500"
-              autoComplete="new-password"
             />
           </div>
         </div>

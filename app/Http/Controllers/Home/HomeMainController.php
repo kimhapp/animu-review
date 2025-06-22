@@ -29,7 +29,7 @@ class HomeMainController extends Controller
 
         // Filter by country
         if ($request->filled('country')) {
-            $query->whereHas('country', fn($q) => $q->where('name', $request->category));
+            $query->whereHas('country', fn($q) => $q->where('name', $request->country));
         }
     
         // Filter by reviewed only
@@ -58,11 +58,11 @@ class HomeMainController extends Controller
         }
     
         return Inertia::render('home/index', [
-            'animes' => $query->with(['genres', 'category', 'review'])->get(),
-            'filters' => $request->only(['genre', 'category', 'country', 'sort', 'reviewed_only']),
-            'countries' => Country::all(),
-            'genres' => Genre::all(),
-            'categories' => Category::all()
+           'animes' => $query->with(['genres', 'category', 'review', 'country'])->get(),
+           'filters' => $request->only(['genre', 'category', 'country', 'sort', 'reviewed_only']),
+           'countries' => Country::all(),
+           'genres' => Genre::all(),
+           'categories' => Category::all()
         ]);
     }
 }

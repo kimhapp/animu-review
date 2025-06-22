@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 
 type CategoryFormData = {
   name: string;
-  description?: string;
 };
 
 type Props = {
@@ -27,19 +26,9 @@ export function CategoryForm({ data, onChange, onSubmit }: Props) {
         />
       </div>
 
-      <div className="space-y-2">
-        <label htmlFor="category-description">Description (optional)</label>
-        <Input
-          id="category-description"
-          value={data.description || ''}
-          onChange={(e) => onChange('description', e.target.value)}
-          placeholder="Optional description"
-        />
-      </div>
-
       <div className="flex space-x-2 pt-2">
         <Button type="submit">Save Category</Button>
       </div>
     </form>
   );
-}
+} 

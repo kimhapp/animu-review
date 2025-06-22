@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Home;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -10,12 +10,6 @@ class RatingRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        // If updating, make sure user owns the rating
-        if ($this->route('rating')) {
-            return Auth::check() && $this->user()->id === $this->route('rating')->user_id;
-        }
-
-        // On create
         return Auth::check();
     }
 

@@ -23,14 +23,14 @@ class CountryController extends Controller
     {
         Country::create($request->validated());
 
-        return redirect()->route('admin.country.index')
+        return redirect()->route('admin.country')
             ->with('success', 'Country created successfully.');
     }
 
     // Show edit form
     public function edit(Country $country)
     {
-        return Inertia::render('admin/country-edit', [
+        return Inertia::render('admin/country', [
             'country' => $country,
         ]);
     }
@@ -40,7 +40,7 @@ class CountryController extends Controller
     {
         $country->update($request->validated());
 
-        return redirect()->route('admin.country.index')
+        return redirect()->route('admin.country')
             ->with('success', 'Country updated successfully.');
     }
 
@@ -49,7 +49,7 @@ class CountryController extends Controller
     {
         $country->delete();
 
-        return redirect()->route('admin.country.index')
+        return redirect()->route('admin.country')
             ->with('success', 'Country deleted successfully.');
     }
 }

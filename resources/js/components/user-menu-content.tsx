@@ -42,7 +42,7 @@ import {
   
           {(user.role === 'reviewer' || user.role === 'admin') && (
             <DropdownMenuItem asChild>
-              <Link className="block w-full" href={route('create.review')} as="button" prefetch onClick={cleanup}>
+              <Link className="block w-full" href={route('review.create')} as="button" prefetch onClick={cleanup}>
                 <Star className="mr-2" />
                 Add Review
               </Link>

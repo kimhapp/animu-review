@@ -5,6 +5,7 @@ import { Plus } from 'lucide-react';
 import { CountryForm } from '@/components/admin/country-form';
 import AdminLayout from '@/layouts/admin-layout';
 import { BreadcrumbItem } from '@/types';
+import { router, useForm, usePage } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
   { title: 'Dashboard', href: '/dashboard' },
@@ -12,49 +13,69 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 type CountryFormData = {
+  id: number;
   name: string;
 };
 
+type PageProps = {
+  countries: CountryFormData[];
+};
+
 export default function CountriesIndex() {
+  const { countries } = usePage<PageProps>().props;
   const [showForm, setShowForm] = useState(false);
-  const [countries, setCountries] = useState<CountryFormData[]>([]);
-  const initialData = { name: '' };
-  const [formData, setFormData] = useState<CountryFormData>(initialData);
-  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [formData, setFormData] = useState<CountryFormData>({ id: 0, name: '' });
+  const [editingId, setEditingId] = useState<number | null>(null);
 
   const handleChange = (field: 'name', value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  const {
+      data,
+      setData,
+      post,
+      put,
+      delete: destroy,
+      processing,
+      reset,
+      errors,
+    } = useForm<CountryFormData>({ id: 0, name: '' });
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (editingIndex !== null) {
-      // ✏️ Editing existing country
-      const updatedList = [...countries];
-      updatedList[editingIndex] = formData;
-      setCountries(updatedList);
-      setEditingIndex(null);
+    if (editingId) {
+      router.put(route('admin.country.update', { country: editingId }), formData, {
+        onSuccess: () => {
+          setEditingId(null); 
+          router.visit(route('admin.country'));
+        },
+      });
     } else {
-      // ➕ Adding new country
-      setCountries((prev) => [...prev, formData]);
+      router.post(route('admin.country.store'), formData, {
+        onSuccess: () => {
+          router.visit(route('admin.country'));
+        },
+      });
     }
-
-    // Reset form
-    setFormData(initialData);
-    setShowForm(false);
   };
 
-  const handleEdit = (index: number) => {
-    const countryToEdit = countries[index];
-    setFormData(countryToEdit);
-    setEditingIndex(index);
+  const handleEdit = (id: number) => {
+    const country = countries.find((country) => country.id === id);
+    if (!country) return; // fallback if not found
+    setFormData(country);
+    setEditingId(id);
     setShowForm(true);
   };
 
-  const handleDelete = (index: number) => {
+  const handleDelete = (id: number) => {
     if (window.confirm('Are you sure you want to delete this country?')) {
-      setCountries(countries.filter((_, i) => i !== index));
+      router.delete(route('admin.country.destroy', id), {
+        onSuccess: () => {
+          router.visit(route('admin.country'));
+        },
+      });
     }
   };
 
@@ -73,7 +94,7 @@ export default function CountriesIndex() {
         {showForm && (
           <Card>
             <CardHeader>
-              <CardTitle>{editingIndex !== null ? 'Edit Country' : 'Add New Country'}</CardTitle>
+              <CardTitle>{editingId !== null ?'Edit Country' : 'Add New Country'}</CardTitle>
             </CardHeader>
             <CardContent>
               <CountryForm
@@ -94,28 +115,29 @@ export default function CountriesIndex() {
             {countries.length === 0 ? (
               <p className="text-muted-foreground">No countries found.</p>
             ) : (
-              <div className="grid gap-4">
+              <ul className="space-y-4">
                 {countries.map((country, index) => (
-                  <div key={index} className="border rounded-lg p-4 bg-white shadow-sm">
-                    <div className="flex justify-between items-start">
-                      <div className="space-y-2 flex-1">
-                        <h3 className="text-lg font-semibold text-gray-900">{country.name}</h3>
-                      </div>
-                      <div className="flex space-x-2 ml-4">
-                        <Button variant="outline" size="sm" onClick={() => handleEdit(index)}>
-                          Edit
-                        </Button>
-                        <Button variant="destructive" size="sm" onClick={() => handleDelete(index)}>
-                          Delete
-                        </Button>
-                      </div>
+                  <li
+                    key={index}
+                    className="border-b pb-4 mb-4 flex justify-between items-start"
+                  >
+                    <div>
+                      <p><strong>Name:</strong> {country.name}</p>
                     </div>
-                  </div>
+                    <div className="flex space-x-2">
+                      <Button variant="outline" size="sm" onClick={() => handleEdit(country.id)}>
+                        Edit
+                      </Button>
+                      <Button variant="destructive" size="sm" onClick={() => handleDelete(country.id)}>
+                        Delete
+                      </Button>
+                    </div>
+                  </li>
                 ))}
-              </div>
+              </ul>
             )}
           </CardContent>
-        </Card>
+</Card>
       </div>
     </AdminLayout>
   );

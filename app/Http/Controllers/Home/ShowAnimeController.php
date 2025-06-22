@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Home;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Http\Requests\Home\RatingRequest;
 use App\Models\Anime;
 use Inertia\Inertia;
 
@@ -13,7 +14,6 @@ class ShowAnimeController extends Controller
     public function create($id)
     {
         $anime = Anime::with(['genres', 'category', 'review'])->findOrFail($id);
-        
 
         // Fetch similar anime by genre (you can adjust this logic)
         $genreIds = $anime->genres->pluck('id');
@@ -33,5 +33,12 @@ class ShowAnimeController extends Controller
             'latestAnime' => $latestAnime,
             'selectedAnime' => $anime,
         ]);
+    }
+
+    public function store_rating(RatingRequest $request) {
+        
+    }
+
+    public function edit_rating(RatingRequest $request) {
     }
 }

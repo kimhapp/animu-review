@@ -29,22 +29,7 @@ class ReviewPosted extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return ['database', 'mail'];
-    }
-
-    /**
-     * Get the mail representation of the notification.
-     */
-    public function toMail($notifiable)
-    {
-        $url = route('home.show', $this->review->id);
-
-        return (new MailMessage)
-            ->subject('New Review Posted')
-            ->greeting("Hi {$notifiable->name},")
-            ->line("{$this->review->user->name} posted a new review on {$this->review->anime->title}.")
-            ->action('View Review', $url)
-            ->line('Thank you for using our website!');
+        return ['database'];
     }
     
     public function toDatabase($notifiable)

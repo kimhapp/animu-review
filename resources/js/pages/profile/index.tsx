@@ -32,7 +32,7 @@ export default function ProfilePage({ user: initialUser, favoriteAnime, reviewed
         name: parsed.username ?? prev.name,
         bio: parsed.bio ?? prev.bio,
         imageUrl: parsed.image ?? prev.imageUrl,
-        coverImageUrl: parsed.banner ?? prev.coverImageUrl,
+        bannerUrl: parsed.banner ?? prev.bannerUrl,
         email: parsed.email ?? prev.email,
       }));
       localStorage.removeItem('profileFormData');
@@ -93,12 +93,12 @@ export default function ProfilePage({ user: initialUser, favoriteAnime, reviewed
 
         {/* Cover */}
         <div className="relative w-full h-60 md:h-60 bg-sidebar-primary">
-          {user?.coverImageUrl ? (
+          {user?.bannerUrl ? (
             <img
               src={
-                typeof user.coverImageUrl === 'object' && 'url' in user.coverImageUrl
-                  ? (user.coverImageUrl as { url: string }).url
-                  : (user.coverImageUrl as string)
+                typeof user.bannerUrl === 'object' && 'url' in user.bannerUrl
+                  ? (user.bannerUrl as { url: string }).url
+                  : (user.bannerUrl as string)
               }
               alt="Cover"
               className="object-cover w-full h-full brightness-90"

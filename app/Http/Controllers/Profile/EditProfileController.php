@@ -14,13 +14,14 @@ class EditProfileController extends Controller
     // Show edit form with user data
     public function edit(Request $request)
     {
+
         $user = $request->user();
 
         return Inertia::render('profile/edit', [
             'user' => [
-                'username' => $user->username,
+                'id' => $user->id,
+                'name' => $user->name,
                 'bio' => $user->bio,
-                'email' => $user->email,
                 'imageUrl' => $user->imageUrl,
                 'bannerUrl' => $user->bannerUrl,
             ],
@@ -33,13 +34,6 @@ class EditProfileController extends Controller
         $user = $request->user();
 
         $data = $request->validated();
-
-        // Update password only if filled
-        if ($request->filled('password')) {
-            $data['password'] = bcrypt($request->password);
-        } else {
-            unset($data['password']);
-        }
 
         // Here, since you use imageUrl, assume client sends full URLs or strings
         if ($request->filled('imageUrl')) {
@@ -58,10 +52,6 @@ class EditProfileController extends Controller
     // Delete user account
     public function destroy(Request $request): RedirectResponse
     {
-        $request->validate([
-            'password' => ['required', 'current_password'],
-        ]);
-
         $user = $request->user();
 
         Auth::logout();

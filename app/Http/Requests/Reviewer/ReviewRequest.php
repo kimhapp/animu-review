@@ -10,12 +10,6 @@ class ReviewRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        // If updating, ensure the user owns the review
-        if ($this->route('review')) {
-            return Auth::check() && $this->user()->id === $this->route('review')->user_id;
-        }
-
-        // Otherwise (creating), just check auth
         return Auth::check();
     }
 

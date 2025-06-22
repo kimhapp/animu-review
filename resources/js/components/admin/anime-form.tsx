@@ -86,7 +86,7 @@ export function AnimeForm({ data, genres, categories, countries, onChange, onSub
           id="country"
           value={data.country}
           onChange={(e) => onChange('country', Number(e.target.value))}
-          className="w-full border rounded-md px-3 py-2"
+          className="w-full rounded-md border border-gray-300 bg-gray-100 px-3 py-2 text-sm text-gray-800 focus:border-blue-500 focus:outline-none dark:bg-gray-800 dark:text-white dark:border-gray-600"
         >
           <option value="">Select a country</option>
           {countries.map((country) => (
@@ -121,6 +121,56 @@ export function AnimeForm({ data, genres, categories, countries, onChange, onSub
             onChange('genre_ids', ids);
           }}
           className="text-sm"
+          styles={{
+            control: (base, state) => ({
+              ...base,
+              backgroundColor: '#1f2937', // Tailwind bg-gray-800
+              borderColor: state.isFocused ? '#7c3aed' : '#374151', // purple-600 focus or gray-700 default
+              boxShadow: state.isFocused ? '0 0 0 1px #7c3aed' : 'none',
+              color: '#d1d5db', // Tailwind text-gray-300
+              '&:hover': {
+                borderColor: '#7c3aed', // purple-600 on hover
+              },
+            }),
+            menu: (base) => ({
+              ...base,
+              backgroundColor: '#1f2937', // bg-gray-800
+              color: '#d1d5db',
+            }),
+            option: (base, state) => ({
+              ...base,
+              backgroundColor: state.isFocused
+                ? '#4c1d95' // purple-900 hover/focus
+                : '#1f2937', // bg-gray-800
+              color: state.isFocused ? '#f9fafb' : '#d1d5db', // text-gray-50 or text-gray-300
+              cursor: 'pointer',
+            }),
+            multiValue: (base) => ({
+              ...base,
+              backgroundColor: '#6b7280', // Tailwind bg-gray-500
+              color: '#f9fafb', // Tailwind text-gray-50
+            }),
+            multiValueLabel: (base) => ({
+              ...base,
+              color: '#f9fafb', // text-gray-50
+            }),
+            multiValueRemove: (base) => ({
+              ...base,
+              color: '#d1d5db', // text-gray-300
+              ':hover': {
+                backgroundColor: '#7c3aed', // purple-600
+                color: 'white',
+              },
+            }),
+            singleValue: (base) => ({
+              ...base,
+              color: '#d1d5db', // text-gray-300
+            }),
+            placeholder: (base) => ({
+              ...base,
+              color: '#9ca3af', // text-gray-400
+            }),
+          }}
         />
       </div>
 
@@ -130,7 +180,7 @@ export function AnimeForm({ data, genres, categories, countries, onChange, onSub
         <select
           value={data.category_id}
           onChange={(e) => onChange('category_id', Number(e.target.value))}
-          className="w-full border rounded-md px-3 py-2"
+          className="w-full rounded-md border border-gray-300 bg-gray-100 px-3 py-2 text-sm text-gray-800 focus:border-blue-500 focus:outline-none dark:bg-gray-800 dark:text-white dark:border-gray-600"
         >
           {categories.map((category) => (
             <option key={category.id} value={category.id}>

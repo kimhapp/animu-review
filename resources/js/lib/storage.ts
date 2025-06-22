@@ -74,6 +74,20 @@ export const generateAnimeCoverPath = (file: File): string => {
   return `anime-covers/${uniqueId}-${cleanName}.${extension}`;
 };
 
+export const generateAvatarPath = (file: File, userId: number): string => {
+  const extension = file.name.split('.').pop();
+  const uniqueId = crypto.randomUUID();
+  const cleanName = file.name.replace(/\.[^/.]+$/, "").replace(/[^a-zA-Z0-9-]/g, "-").toLowerCase().substring(0, 30);
+  return `avatars/${userId}-${uniqueId}-${cleanName}.${extension}`;
+};
+
+export const generateBannerPath = (file: File, userId: number): string => {
+  const extension = file.name.split('.').pop();
+  const uniqueId = crypto.randomUUID();
+  const cleanName = file.name.replace(/\.[^/.]+$/, "").replace(/[^a-zA-Z0-9-]/g, "-").toLowerCase().substring(0, 30);
+  return `banners/${userId}-${uniqueId}-${cleanName}.${extension}`;
+};
+
 export const isFirebaseStorageUrl = (url: string): boolean => {
   return url.startsWith("https://firebasestorage.googleapis.com/");
 };

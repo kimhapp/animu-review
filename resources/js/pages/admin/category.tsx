@@ -74,13 +74,12 @@ export default function CategoriesIndex() {
     if (window.confirm('Are you sure you want to delete this category?')) {
       router.delete(route('admin.category.destroy', category.id), {
         onSuccess: () => {
-          setCategoryList((prev) => prev.filter((_, i) => i !== index));
+          router.visit(route('admin.category'));
         },
       });
     }
   };
   
-
   return (
     <AdminLayout breadcrumbs={breadcrumbs}>
       <div className="space-y-6 p-6">

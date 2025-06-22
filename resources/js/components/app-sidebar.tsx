@@ -13,8 +13,8 @@ const mainNavItems: NavItem[] = [
         icon: LayoutGrid,
     },
     {
-        title: 'Reviewers',
-        href: route('admin.reviewer'),
+        title: 'Privileges',
+        href: route('admin.privilege'),
         icon: Users,
     },
     {

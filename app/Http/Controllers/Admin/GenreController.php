@@ -21,19 +21,26 @@ class GenreController extends Controller
         $validated = $request->validated();
         Genre::create($validated);
 
-        return redirect()->route('admin/genre');
+        return redirect()->route('admin.genre');
+    }
+
+    public function edit(Genre $genre)
+    {
+        return Inertia::render('admin/genre', [
+            'genre' => $genre,
+        ]);
     }
 
     public function update(GenreRequest $request, Genre $genre) {
         $validated = $request->validated();
         $genre->update($validated);
     
-        return redirect()->route('admin/genre');
+        return redirect()->route('admin.genre');
     }
 
     public function destroy(Genre $genre){    
         $genre->delete();
 
-        return redirect()->route('admin/genre')->with('success', 'Genre deleted successfully.');
+        return redirect()->route('admin.genre')->with('success', 'Genre deleted successfully.');
     }
 }
