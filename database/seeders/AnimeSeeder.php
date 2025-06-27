@@ -18,7 +18,7 @@ class AnimeSeeder extends Seeder
             [
                 'title' => 'Attack on Titan',
                 'native_title' => '進撃の巨人',
-                'country' => $countryIds['Japan'],
+                'country_id' => $countryIds['Japan'],
                 'description' => 'Humans fight against gigantic humanoid Titans.',
                 'user_rating' => 4.5,
                 'release_date' => '2013-04-07',
@@ -35,7 +35,7 @@ class AnimeSeeder extends Seeder
             [
                 'title' => 'Your Name',
                 'native_title' => '君の名は。',
-                'country' => $countryIds['Japan'],
+                'country_id' => $countryIds['Japan'],
                 'description' => 'A body-swapping romance drama.',
                 'user_rating' => 4.6,
                 'release_date' => '2016-08-26',
@@ -52,7 +52,7 @@ class AnimeSeeder extends Seeder
             [
                 'title' => 'Fullmetal Alchemist: Brotherhood',
                 'native_title' => '鋼の錬金術師 FULLMETAL ALCHEMIST',
-                'country' => $countryIds['Japan'],
+                'country_id' => $countryIds['Japan'],
                 'description' => 'Two brothers search for the Philosopher\'s Stone.',
                 'user_rating' => 4.6,
                 'release_date' => '2009-04-05',
@@ -69,7 +69,7 @@ class AnimeSeeder extends Seeder
             [
                 'title' => 'Demon Slayer',
                 'native_title' => '鬼滅の刃',
-                'country' => $countryIds['Japan'],
+                'country_id' => $countryIds['Japan'],
                 'description' => 'A boy becomes a demon slayer to save his sister.',
                 'user_rating' => 4.5,
                 'release_date' => '2019-04-06',
@@ -86,7 +86,7 @@ class AnimeSeeder extends Seeder
             [
                 'title' => 'One Punch Man',
                 'native_title' => 'ワンパンマン',
-                'country' => $countryIds['Japan'],
+                'country_id' => $countryIds['Japan'],
                 'description' => 'A superhero who defeats enemies with one punch.',
                 'user_rating' => 4.4,
                 'release_date' => '2015-10-05',
@@ -103,7 +103,7 @@ class AnimeSeeder extends Seeder
             [
                 'title' => 'Naruto',
                 'native_title' => 'ナルト',
-                'country' => $countryIds['Japan'],
+                'country_id' => $countryIds['Japan'],
                 'description' => 'A young ninja seeks recognition and dreams to become Hokage.',
                 'user_rating' => 4.2,
                 'release_date' => '2002-10-03',
@@ -120,7 +120,7 @@ class AnimeSeeder extends Seeder
             [
                 'title' => 'Spirited Away',
                 'native_title' => '千と千尋の神隠し',
-                'country' => $countryIds['Japan'],
+                'country_id' => $countryIds['Japan'],
                 'description' => 'A girl enters a mysterious spirit world.',
                 'user_rating' => 4.7,
                 'release_date' => '2001-07-20',
@@ -137,7 +137,7 @@ class AnimeSeeder extends Seeder
             [
                 'title' => 'Death Note',
                 'native_title' => 'デスノート',
-                'country' => $countryIds['Japan'],
+                'country_id' => $countryIds['Japan'],
                 'description' => 'A notebook allows killing anyone whose name is written in it.',
                 'user_rating' => 4.5,
                 'release_date' => '2006-10-04',
@@ -154,7 +154,7 @@ class AnimeSeeder extends Seeder
             [
                 'title' => 'My Hero Academia',
                 'native_title' => '僕のヒーローアカデミア',
-                'country' => $countryIds['Japan'],
+                'country_id' => $countryIds['Japan'],
                 'description' => 'A boy dreams of becoming a hero in a superpowered world.',
                 'user_rating' => 4.2,
                 'release_date' => '2016-04-03',
@@ -171,7 +171,7 @@ class AnimeSeeder extends Seeder
             [
                 'title' => 'Tokyo Ghoul',
                 'native_title' => '東京喰種トーキョーグール',
-                'country' => $countryIds['Japan'],
+                'country_id' => $countryIds['Japan'],
                 'description' => 'A college student becomes a half-ghoul after an attack.',
                 'user_rating' => 4.0,
                 'release_date' => '2014-07-04',

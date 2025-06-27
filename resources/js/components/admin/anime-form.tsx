@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 type AnimeFormData = {
   title: string;
   native_title: string;
-  country: number;          // country ID
+  country_id: number;          // country ID
   description: string;
   release_date: string;     // ISO date string, e.g. '2024-06-21'
   duration?: number;        // optional number of minutes
@@ -84,8 +84,8 @@ export function AnimeForm({ data, genres, categories, countries, onChange, onSub
         <label htmlFor="country">Country</label>
         <select
           id="country"
-          value={data.country}
-          onChange={(e) => onChange('country', Number(e.target.value))}
+          value={data.country_id}
+          onChange={(e) => onChange('country_id', Number(e.target.value))}
           className="w-full rounded-md border border-gray-300 bg-gray-100 px-3 py-2 text-sm text-gray-800 focus:border-blue-500 focus:outline-none dark:bg-gray-800 dark:text-white dark:border-gray-600"
         >
           <option value="">Select a country</option>

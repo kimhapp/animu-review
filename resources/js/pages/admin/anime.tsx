@@ -23,7 +23,7 @@ type AnimeFormData = {
   id: number
   title: string;
   native_title: string;
-  country: number;          // country ID
+  country_id: number;          // country ID
   description: string;
   release_date: string;     // ISO date string, e.g. '2024-06-21'
   duration?: number;        // optional number of minutes
@@ -58,7 +58,7 @@ export default function AnimesIndex() {
     id: 0,
     title: '',
     native_title: '',
-    country: 0,              // example default country ID
+    country_id: 0,              // example default country ID
     description: '',
     release_date: '',        // or something like '2024-06-21'
     duration: undefined,
@@ -110,7 +110,7 @@ export default function AnimesIndex() {
     const submitData = {
       title: formData.title,
       native_title: formData.native_title,
-      country: formData.country,
+      country: formData.country_id,
       description: formData.description,
       release_date: formData.release_date,
       duration: formData.duration || null,

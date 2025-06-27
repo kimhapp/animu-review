@@ -12,7 +12,7 @@ class Anime extends Model
     protected $fillable = [
         'title',
         'native_title',
-        'country',
+        'country_id',
         'description',
         'user_rating',
         'release_date',
@@ -66,6 +66,6 @@ class Anime extends Model
 
     public function country()
     {
-        return $this->belongsTo(Country::class, 'country');
+        return $this->belongsTo(Country::class);
     }
 }

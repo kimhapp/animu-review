@@ -51,6 +51,8 @@ export interface SharedData {
 export interface Anime {
   id: number;
   title: string;
+  native_title: string;
+  description: string
   studio: string;
   release_date: string;
   user_rating: number;
