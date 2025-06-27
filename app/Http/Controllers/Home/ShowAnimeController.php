@@ -13,7 +13,11 @@ class ShowAnimeController extends Controller
     //
     public function create($id)
     {
-        $anime = Anime::with(['genres', 'category', 'review'])->findOrFail($id);
+        $anime = Anime::with([
+            'genres',
+            'category',
+            'review.user'
+        ])->findOrFail($id);
 
         // Fetch similar anime by genre (you can adjust this logic)
         $genreIds = $anime->genres->pluck('id');

@@ -261,6 +261,19 @@ export default function Homepage({ similarAnime, latestAnime, selectedAnime }: P
         </section>
 
         <main className="p-8 max-w-7xl mx-auto">
+          {/* Review Section */}
+          <section className="mb-12 bg-white rounded-lg p-8 text-black">
+            <h2 className="text-3xl font-bold mb-4">Review</h2>
+            {animeToShow.review ? (
+              <>
+                <p className="text-sm text-gray-600 mb-2">Written by {animeToShow.review.user.name}</p>
+                <p className="leading-relaxed">{animeToShow.review.content}</p>
+              </>
+            ) : (
+              <p className="text-gray-500">No review</p>
+            )}
+          </section>
+
           {similarAnime.length > 0 && (
             <section className="mb-12">
               <div className="flex justify-between items-center mb-4">

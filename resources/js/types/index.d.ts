@@ -60,9 +60,7 @@ export interface Anime {
   imageUrl: string;
   genres?: Genre[];
   category?: Category;
-  review?: {
-    rating_amount: number;
-  } | null;
+  review?: Review;
   country?: Country;
 }
 
@@ -85,7 +83,10 @@ export type Country = {
 
 // Review Domain
 export interface Review {
+  id: number;
+  content: string;
   rating_amount: number;
+  user: User;
 }
 
 export interface ReviewWithAnime {
