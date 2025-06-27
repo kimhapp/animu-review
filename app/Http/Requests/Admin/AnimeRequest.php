@@ -30,7 +30,7 @@ class AnimeRequest extends FormRequest
                 'max:255',
                 Rule::unique('animes', 'native_title')->ignore($animeId),
             ],
-            'country' => ['required', Rule::exists('countries', 'id')],
+            'country_id' => ['required', Rule::exists('countries', 'id')],
             'description' => ['required', 'string'],
             'release_date' => ['required', 'date'],
             'duration' => ['nullable', 'integer', 'min:0'],
