@@ -110,7 +110,7 @@ export default function AnimesIndex() {
     const submitData = {
       title: formData.title,
       native_title: formData.native_title,
-      country: formData.country_id,
+      country_id: formData.country_id,
       description: formData.description,
       release_date: formData.release_date,
       duration: formData.duration || null,

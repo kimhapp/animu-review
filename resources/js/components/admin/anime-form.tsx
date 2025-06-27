@@ -85,7 +85,7 @@ export function AnimeForm({ data, genres, categories, countries, onChange, onSub
         <select
           id="country"
           value={data.country_id}
-          onChange={(e) => onChange('country_id', Number(e.target.value))}
+          onChange={(e) => onChange('country_id', e.target.value ? Number(e.target.value) : null)}
           className="w-full rounded-md border border-gray-300 bg-gray-100 px-3 py-2 text-sm text-gray-800 focus:border-blue-500 focus:outline-none dark:bg-gray-800 dark:text-white dark:border-gray-600"
         >
           <option value="">Select a country</option>
@@ -179,7 +179,7 @@ export function AnimeForm({ data, genres, categories, countries, onChange, onSub
         <label>Category</label>
         <select
           value={data.category_id}
-          onChange={(e) => onChange('category_id', Number(e.target.value))}
+          onChange={(e) => onChange('category_id', e.target.value ? Number(e.target.value) : null)}
           className="w-full rounded-md border border-gray-300 bg-gray-100 px-3 py-2 text-sm text-gray-800 focus:border-blue-500 focus:outline-none dark:bg-gray-800 dark:text-white dark:border-gray-600"
         >
           {categories.map((category) => (
