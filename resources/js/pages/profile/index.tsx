@@ -172,7 +172,7 @@ export default function ProfilePage({ user: initialUser, favoriteAnime, reviewed
                     ))}
                   </div>
                   <span className="text-[10px] bg-purple-600 px-2 py-0.5 rounded-full">
-                    ★ {anime.user_rating}
+                    ★ {anime.review?.rating_amount}
                   </span>
                 </div>
               </div>

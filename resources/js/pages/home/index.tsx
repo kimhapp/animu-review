@@ -66,8 +66,8 @@ export default function AnimePage({ animes, genres, categories, countries }: Ani
         break;
       case 'rating':
         filtered.sort((a, b) => {
-          const aRating = a.review ? a.review.rating_amount + a.user_rating : a.user_rating * 2;
-          const bRating = b.review ? b.review.rating_amount + b.user_rating : b.user_rating * 2;
+          const aRating = a.review ? a.review.rating_amount : 0;
+          const bRating = b.review ? b.review.rating_amount : 0;
           return bRating - aRating;
         });
         break;
@@ -201,7 +201,7 @@ export default function AnimePage({ animes, genres, categories, countries }: Ani
                     ))}
                   </div>
                   <span className="text-[10px] bg-purple-600 px-2 py-0.5 rounded-full">
-                    ★ {anime.user_rating}
+                    ★ {anime.review?.rating_amount}
                   </span>
                 </div>
               </div>
