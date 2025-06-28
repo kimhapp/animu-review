@@ -28,10 +28,6 @@ export default function AnimePage({ animes, genres, categories, countries }: Ani
   const countryMap = Object.fromEntries(countries.map(c => [c.id, c.name]));
 
   useEffect(() => {
-    console.log('Anime example:', animes[0]);
-  }, []);
-
-  useEffect(() => {
     let filtered = [...animes];
 
     if (searchQuery.trim()) {

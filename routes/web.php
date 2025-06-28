@@ -22,7 +22,7 @@ Route::prefix('home')->group(function () {
     Route::get('{id}', [ShowAnimeController::class, 'create'])->name('home.show');
 
     Route::middleware('auth')->group(function () {
-        
+        Route::post('favorite/{id}', [ShowAnimeController::class, 'favorite'])->name('home.show.favorite');
     });
 });
 

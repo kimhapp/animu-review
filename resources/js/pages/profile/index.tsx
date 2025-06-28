@@ -4,7 +4,7 @@ import { Anime, ProfilePageProps, ReviewWithAnime } from '@/types';
 import AppLayout from '@/layouts/app-layout';
 import { Button } from '@/components/ui/button';
 
-export default function ProfilePage({ user: initialUser, favoriteAnime, reviewedAnime, ratingAnime }: ProfilePageProps) {
+export default function ProfilePage({ user: initialUser, favoriteAnime, reviewedAnime, ratingAnime}: ProfilePageProps) {
   const [activeTab, setActiveTab] = useState<'favorites' | 'reviews' | 'rating'>('favorites');
 
   const [favList, setFavList] = useState<Anime[]>(favoriteAnime.data);
@@ -128,7 +128,6 @@ export default function ProfilePage({ user: initialUser, favoriteAnime, reviewed
           <div className="text-left">
             <h2 className="text-2xl font-bold">{user.name || 'No name'}</h2>
             <p className="mt-1">{user.bio?.trim() !== '' ? user.bio : <span className="text-muted-foreground">No bio</span>}</p>
-            <p className="mt-1 text-muted-foreground">0 follower ・ 0 following</p>
             <p className="text-muted-foreground mt-1">Role: {user.role === 'admin' ? 'Admin' : user.role === 'reviewer' ? 'Reviewer' : 'User'}</p>
           </div>
         </div>
@@ -143,12 +142,41 @@ export default function ProfilePage({ user: initialUser, favoriteAnime, reviewed
         </div>
 
         {/* Anime Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-6">
-          {list.map((anime) => (
-            <div key={anime.id} className="bg-gray-800 p-2 rounded-lg">
-              <img src={anime.imageUrl || '/images/default-cover.jpg'} className="w-full h-40 object-cover rounded-md" />
-              <h3 className="mt-2 font-semibold">{anime.title}</h3>
-            </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+          {list.map(anime => (
+            <Link
+              key={anime.id}
+              href={route('home.show', anime.id)}
+              className="bg-gray-800 rounded-lg overflow-hidden hover:shadow-xl hover:scale-105 transition-transform"
+            >
+              <img
+                src={anime.imageUrl || 'https://via.placeholder.com/200x280/444/fff?text=Anime'}
+                alt={anime.title}
+                className="w-full h-48 object-cover"
+              />
+              <div className="p-3">
+                <h3 className="text-sm font-semibold truncate">{anime.title}</h3>
+                <div className="text-xs text-gray-400 flex justify-between mt-1">
+                  <span className="truncate">{anime.studio}</span>
+                  <span>{anime.release_date?.split('-')[0]}</span>
+                </div>
+                <div className="flex justify-between items-center mt-3">
+                  <div className="flex flex-wrap gap-1">
+                    {anime.genres?.slice(0, 2).map(g => (
+                      <span
+                        key={g.id}
+                        className="text-[10px] bg-gray-700 px-2 py-0.5 rounded-full"
+                      >
+                        {g.name}
+                      </span>
+                    ))}
+                  </div>
+                  <span className="text-[10px] bg-purple-600 px-2 py-0.5 rounded-full">
+                    ★ {anime.user_rating}
+                  </span>
+                </div>
+              </div>
+            </Link>
           ))}
         </div>
 

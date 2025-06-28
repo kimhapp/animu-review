@@ -109,6 +109,7 @@ export interface ProfilePageProps {
   favoriteAnime: Paginated<Anime>;
   reviewedAnime: Paginated<ReviewWithAnime>;
   ratingAnime: PaginatedResponse<Anime>;
+  countries: Country[];
 }
 
 // Review Form Props

@@ -71,13 +71,13 @@ export default function PrivilegeIndex({ privilegedUsers: initialPrivilegedUsers
       if (!user) return;
         router.put(route('admin.privilege.update', { user: user.id }), submitData, {
         onSuccess: () => {
-          router.put(route('admin.privilege'))
+          router.visit(route('admin.privilege'))
         },
       });
     } else {
       router.post(route('admin.privilege.store'), submitData, {
         onSuccess: () => {
-          router.put(route('admin.privilege'))
+          router.visit(route('admin.privilege'))
         },
       });
     }

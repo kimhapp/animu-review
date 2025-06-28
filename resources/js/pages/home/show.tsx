@@ -1,4 +1,4 @@
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import { Anime } from '@/types';
 import { useState, useCallback, useMemo } from 'react';
 import AppLayout from '@/layouts/app-layout';
@@ -8,13 +8,14 @@ interface Props {
   similarAnime: Anime[];
   latestAnime: Anime[];
   selectedAnime: Anime;
+  isFavorited: boolean;
 }
 
-export default function Homepage({ similarAnime, latestAnime, selectedAnime }: Props) {
+export default function Homepage({ similarAnime, latestAnime, selectedAnime, isFavorited: initialFavorite }: Props) {
   const animeToShow = selectedAnime;
   const reviewRating = Number(animeToShow.review?.rating_amount) || 0;
 
-  const [isFavorited, setIsFavorited] = useState(false);
+  const [isFavorited, setIsFavorited] = useState(initialFavorite);
   const [isNotificationEnabled, setIsNotificationEnabled] = useState(false);
   const [showMoreSimilar, setShowMoreSimilar] = useState(false);
   const [showMoreLatest, setShowMoreLatest] = useState(false);
@@ -43,9 +44,17 @@ export default function Homepage({ similarAnime, latestAnime, selectedAnime }: P
   }, []);
 
   const handleFavorite = useCallback(() => {
-    setIsFavorited((prev) => !prev);
-    // TODO: Add API call to update favorite status
-  }, []);
+    setIsFavorited((prev) => !prev); // UI update
+  
+    router.post(
+      route('home.show.favorite', animeToShow.id), // e.g. favorite/{id}
+      {},
+      {
+        preserveScroll: true,
+        preserveState: true,
+      }
+    );
+  }, [animeToShow.id]);
 
   const renderStars = useCallback((rating: number) => {
     const stars = [];
