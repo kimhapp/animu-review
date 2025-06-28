@@ -182,6 +182,7 @@ export function AnimeForm({ data, genres, categories, countries, onChange, onSub
           onChange={(e) => onChange('category_id', e.target.value ? Number(e.target.value) : null)}
           className="w-full rounded-md border border-gray-300 bg-gray-100 px-3 py-2 text-sm text-gray-800 focus:border-blue-500 focus:outline-none dark:bg-gray-800 dark:text-white dark:border-gray-600"
         >
+          <option value="">Select a category</option>
           {categories.map((category) => (
             <option key={category.id} value={category.id}>
               {category.name}

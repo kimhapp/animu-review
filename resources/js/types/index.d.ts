@@ -122,5 +122,6 @@ export type ReviewFormProps = {
     content: string;
     anime: { id: number; title: string; imageUrl: string };
   };
+  is_rating?: boolean;
 };
 

@@ -44,5 +44,10 @@ class ShowAnimeController extends Controller
     }
 
     public function edit_rating(RatingRequest $request) {
+
+    }
+
+    public function add_favorite($id) {
+
     }
 }

@@ -47,11 +47,6 @@ export default function Homepage({ similarAnime, latestAnime, selectedAnime }: P
     // TODO: Add API call to update favorite status
   }, []);
 
-  const handleNotification = useCallback(() => {
-    setIsNotificationEnabled((prev) => !prev);
-    // TODO: Add API call to update notification status
-  }, []);
-
   const renderStars = useCallback((rating: number) => {
     const stars = [];
     const fullStars = Math.floor(rating);
@@ -239,20 +234,6 @@ export default function Homepage({ similarAnime, latestAnime, selectedAnime }: P
                       <Heart className={`w-5 h-5 ${isFavorited ? 'fill-current' : ''}`} />
                       {isFavorited ? 'Favorited' : 'Add to Favorites'}
                     </button>
-
-                    {!animeToShow.review && (
-                      <button
-                        onClick={handleNotification}
-                        className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all ${
-                          isNotificationEnabled
-                            ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                            : 'bg-gray-700 hover:bg-gray-600 text-gray-300'
-                        }`}
-                      >
-                        <Bell className={`w-5 h-5 ${isNotificationEnabled ? 'fill-current' : ''}`} />
-                        {isNotificationEnabled ? 'Notifications On' : 'Notify Me'}
-                      </button>
-                    )}
                   </div>
                 </div>
               </div>

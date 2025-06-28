@@ -1,15 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { ReviewFormProps } from '@/types';
+import React from 'react';
 
 export default function ReviewForm({
   animeList,
   onSave,
   onCancel,
   initialReview,
-}: ReviewFormProps) {
+  is_rating = false,
+}: ReviewFormProps & { is_rating?: boolean }) {
   const [selectedAnimeId, setSelectedAnimeId] = useState<number | null>(
     initialReview?.anime_id ?? null
   );
@@ -18,7 +20,6 @@ export default function ReviewForm({
   const [rating, setRating] = useState(initialReview?.rating ?? 0);
   const [reviewText, setReviewText] = useState(initialReview?.content ?? '');
 
-  // Find selected anime from animeList or fallback to initialReview.anime
   const selectedAnime =
     animeList.find((a) => a.id === selectedAnimeId) ?? initialReview?.anime ?? null;
 
@@ -39,7 +40,7 @@ export default function ReviewForm({
   };
 
   const handleSubmit = () => {
-    if (!selectedAnimeId) {
+    if (!selectedAnimeId && !is_rating) {
       alert('Please select an anime');
       return;
     }
@@ -51,10 +52,9 @@ export default function ReviewForm({
       alert('Please enter a review text');
       return;
     }
-    onSave({ anime_id: selectedAnimeId, rating, reviewText });
+    onSave({ anime_id: selectedAnimeId as number, rating, reviewText });
   };
 
-  // Determine if we are in edit mode
   const isEditMode = Boolean(initialReview);
 
   return (
@@ -62,63 +62,75 @@ export default function ReviewForm({
       className="border border-[#372948] rounded-xl p-8 text-white max-w-3xl w-full mx-auto"
       style={{ backgroundColor: 'var(--color-card)' }}
     >
-      <Label className="block mb-2">Select Anime</Label>
-      {isEditMode ? (
-        <div className="flex items-center gap-4 mb-4 bg-[#1F1D3D] p-3 rounded">
-          <img
-            src={selectedAnime?.imageUrl ?? ''}
-            alt={selectedAnime?.title ?? 'Selected anime'}
-            className="w-14 h-20 object-cover rounded border border-white"
-          />
-          <span className="text-lg font-semibold">{selectedAnime?.title}</span>
-        </div>
-      ) : (
-        <div className="relative mb-4">
-          <Input
-            type="text"
-            className="bg-[#2D2B55] border-[#6C4AB6] text-white"
-            placeholder="Search or select anime..."
-            value={searchTerm || selectedAnime?.title || ''}
-            onChange={handleSearchChange}
-            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-          />
-          {isDropdownOpen && (
-            <ul className="absolute z-10 w-full bg-[#2D2B55] border border-[#6C4AB6] rounded mt-1 max-h-60 overflow-y-auto">
-              {filteredAnime.length > 0 ? (
-                filteredAnime.map((anime) => (
-                  <li
-                    key={anime.id}
-                    className="flex items-center px-3 py-2 cursor-pointer hover:bg-[#372948]"
-                    onClick={() => handleAnimeSelect(anime)}
-                  >
-                    <img
-                      src={anime.imageUrl}
-                      alt={anime.title}
-                      className="w-10 h-14 object-cover rounded mr-3 border border-white"
-                    />
-                    <span>{anime.title}</span>
-                  </li>
-                ))
-              ) : (
-                <li className="px-3 py-2 text-gray-400">No results found</li>
+      <h2 className="text-xl font-bold mb-4">{is_rating ? 'Write your rating' : 'Select Anime'}</h2>
+
+      {!is_rating && (
+        <>
+          {isEditMode ? (
+            <div className="flex items-center gap-4 mb-4 bg-[#1F1D3D] p-3 rounded">
+              <img
+                src={selectedAnime?.imageUrl ?? ''}
+                alt={selectedAnime?.title ?? 'Selected anime'}
+                className="w-14 h-20 object-cover rounded border border-white"
+              />
+              <span className="text-lg font-semibold">{selectedAnime?.title}</span>
+            </div>
+          ) : (
+            <div className="relative mb-4">
+              <Input
+                type="text"
+                className="bg-[#2D2B55] border-[#6C4AB6] text-white"
+                placeholder="Search or select anime..."
+                value={searchTerm || selectedAnime?.title || ''}
+                onChange={handleSearchChange}
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              />
+              {isDropdownOpen && (
+                <ul className="absolute z-10 w-full bg-[#2D2B55] border border-[#6C4AB6] rounded mt-1 max-h-60 overflow-y-auto">
+                  {filteredAnime.length > 0 ? (
+                    filteredAnime.map((anime) => (
+                      <li
+                        key={anime.id}
+                        className="flex items-center px-3 py-2 cursor-pointer hover:bg-[#372948]"
+                        onClick={() => handleAnimeSelect(anime)}
+                      >
+                        <img
+                          src={anime.imageUrl}
+                          alt={anime.title}
+                          className="w-10 h-14 object-cover rounded mr-3 border border-white"
+                        />
+                        <span>{anime.title}</span>
+                      </li>
+                    ))
+                  ) : (
+                    <li className="px-3 py-2 text-gray-400">No results found</li>
+                  )}
+                </ul>
               )}
-            </ul>
+            </div>
           )}
-        </div>
+        </>
       )}
 
       <Label htmlFor="rating" className="block mb-2">
-        Rating (1 - 5)
+        Rating
       </Label>
-      <Input
-        type="number"
-        id="rating"
-        min={1}
-        max={5}
-        value={rating}
-        onChange={(e) => setRating(Number(e.target.value))}
-        className="bg-[#2D2B55] border-[#6C4AB6] text-white mb-4"
-      />
+      <div className="flex items-center space-x-2 mb-4">
+        {[1, 2, 3, 4, 5].map((num) => (
+          <React.Fragment key={num}>
+            <input
+              type="radio"
+              name="rating"
+              id={`rating${num}`}
+              value={num}
+              checked={rating === num}
+              onChange={() => setRating(num)}
+              className="focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <label htmlFor={`rating${num}`}>{num}</label>
+          </React.Fragment>
+        ))}
+      </div>
 
       <Label htmlFor="review" className="block mb-2">
         Review
