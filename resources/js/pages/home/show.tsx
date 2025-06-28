@@ -252,7 +252,7 @@ export default function Homepage({ similarAnime, latestAnime, selectedAnime, isF
 
         <main className="p-8 max-w-7xl mx-auto">
           {/* Review Section */}
-          <section className="mb-12 bg-white rounded-lg p-8 text-black">
+          <section className="mb-12 text-white rounded-lg p-8 ">
             <h2 className="text-3xl font-bold mb-4">Review</h2>
             {animeToShow.review ? (
               <>
