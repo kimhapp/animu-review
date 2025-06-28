@@ -201,7 +201,7 @@ export default function AnimePage({ animes, genres, categories, countries }: Ani
                     ))}
                   </div>
                   <span className="text-[10px] bg-purple-600 px-2 py-0.5 rounded-full">
-                    ★ {anime.review?.rating_amount}
+                    ★ {anime.review?.rating_amount || 0}
                   </span>
                 </div>
               </div>
